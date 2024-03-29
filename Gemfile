@@ -45,10 +45,11 @@ gem "bootsnap", require: false
 # gem "image_processing", "~> 1.2"
 
 group :development, :test do
-  gem "rspec-rails"
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
+  gem "rspec-rails"
   gem "debug", platforms: %i[ mri windows ]
   gem "shoulda-matchers"
+  gem "faker"
 end
 
 group :development do
