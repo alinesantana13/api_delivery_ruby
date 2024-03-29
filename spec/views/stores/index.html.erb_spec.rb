@@ -2,12 +2,14 @@ require 'rails_helper'
 
 RSpec.describe "stores/index", type: :view do
   before(:each) do
+    @user = login_user
+    
     assign(:stores, [
       Store.create!(
-        name: "Name"
+        name: "Name", user: @user
       ),
       Store.create!(
-        name: "Name"
+        name: "Name", user: @user
       )
     ])
   end

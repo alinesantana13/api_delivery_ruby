@@ -50,11 +50,13 @@ group :development, :test do
   gem "debug", platforms: %i[ mri windows ]
   gem "shoulda-matchers"
   gem "faker"
+  gem 'factory_bot_rails'
 end
 
 group :development do
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem "web-console"
+  gem "bullet"
 
   # Add speed badges [https://github.com/MiniProfiler/rack-mini-profiler]
   # gem "rack-mini-profiler"

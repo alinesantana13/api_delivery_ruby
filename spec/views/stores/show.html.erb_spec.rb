@@ -2,8 +2,10 @@ require 'rails_helper'
 
 RSpec.describe "stores/show", type: :view do
   before(:each) do
+    @user = login_user
+
     assign(:store, Store.create!(
-      name: "Name"
+      name: "Name", user: @user
     ))
   end
 
