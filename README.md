@@ -1,24 +1,18 @@
-# README
+# Api Delivery
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+O projeto é uma api de delivery, que está sendo desenvolvida durante as aulas do treinamento Quero Ser Dev da LWSA.
 
-Things you may want to cover:
+### Funcionalidades
 
-* Ruby version
+- Listar as lojas
+- Selecionar uma Loja
+- Listar os produtos de uma loja
 
-* System dependencies
+Perfil Admin
 
-* Configuration
+- Pode cancelar um usuário cadastrado
+- Pode desbloquear o usuário que foi cancelado
 
-* Database creation
+### Tecnologias utilizadas
 
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+![Ícone Ruby](./app/assets/images/icon_ruby.png)
