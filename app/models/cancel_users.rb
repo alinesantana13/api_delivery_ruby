@@ -1,0 +1,2 @@
+class CancelUsers < ApplicationRecord
+end

@@ -9,6 +9,12 @@ Rails.application.routes.draw do
 
   post "sign_in" => "registrations#sign_in"
 
+  post "logout", to: "registrations#logout"
+
+  post "canceluser", to: "registrations#canceluser"
+
+  post "unlockuser", to: "registrations#unlockuser"
+
   root to: "welcome#index"
   
   get "up" => "rails/health#show", as: :rails_health_check

@@ -1,0 +1,2 @@
+class TokenLogout < ApplicationRecord
+end
