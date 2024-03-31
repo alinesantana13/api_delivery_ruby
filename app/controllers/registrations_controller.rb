@@ -1,5 +1,5 @@
 class RegistrationsController < ApplicationController
-    skip_forgery_protection only: [:create, :me]
+    skip_forgery_protection only: [:create,  :sign_in, :me]
     before_action :authenticate!, only: [:me]
 
     def create
