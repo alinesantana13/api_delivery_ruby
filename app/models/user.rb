@@ -8,7 +8,7 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :validatable
 
   def self.from_token(token)
-    decoded = JWT.decode token, "muito.secreto", true, {algorithm: "HS256"}
+    decoded = JWT.decode token, Rails.application.credentials.secret_hash_jwt, true, {algorithm: "HS256"}
     user_data = decoded[0].with_indifferent_access
     User.find(user_data[:id])
   rescue  JWT::ExpiredSignature
@@ -18,7 +18,7 @@ class User < ApplicationRecord
   def self.token_for(user)
     jwt_headers = {exp: 1.hours.from_now.to_i}
     payload = {id: user.id, email: user.email, role: user.role}
-    JWT.encode payload.merge(jwt_headers), "muito.secreto", "HS256"
+    JWT.encode payload.merge(jwt_headers), Rails.application.credentials.secret_hash_jwt, "HS256"
   end
 
   def admin?
