@@ -3,6 +3,8 @@ Rails.application.routes.draw do
   resources :stores
   get "listing" => "products#listing"
 
+  get "storeslist" => "registrations#storeslist"
+
   post "new" => "registrations#create", as: :create_registration
 
   get "me" => "registrations#me"

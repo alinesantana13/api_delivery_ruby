@@ -1,7 +1,12 @@
 class RegistrationsController < ApplicationController
-    skip_forgery_protection only: [:create,  :sign_in, :me, :logout, :canceluser, :unlockuser]
+    skip_forgery_protection only: [:create,  :sign_in, :me, :logout, :canceluser, :unlockuser, :storeslist]
     before_action :authenticate!, only: [:me]
     rescue_from User::InvalidToken, with: :not_authorized
+
+    def storeslist
+        @stores = Store.all;
+        render json: {"stores": @stores}
+    end
 
     def create
         @user = User.new(user_params)
@@ -14,7 +19,7 @@ class RegistrationsController < ApplicationController
         user = User.find_by(email: sign_in_params[:email])
 
         if !user || !user.valid_password?(sign_in_params[:password])
-            render json: {message: "Nope!"}, status: 401
+            render json: {message: "Incorrect email or password!"}, status: 401
         else
             cancel_user1 = CancelUsers.find_by(user_id: user.id)
             if cancel_user1.present?
@@ -29,12 +34,17 @@ class RegistrationsController < ApplicationController
     def me
         token = request.headers['Authorization']&.split(' ')&.last
 
+        decoded_token = JWT.decode token, Rails.application.credentials.secret_hash_jwt, true, {algorithm: "HS256"}
+        payload = decoded_token.first
+        user_id = payload['id']
+        user_email = payload['email']
+
         token_logout_db = TokenLogout.find_by(token: token)
 
         if token_logout_db.present?
             render json: {"message": "User needs to log in"}
         else
-            render json: {id: current_user.id, email: current_user.email}
+            render json: {id: user_id, email: user_email}
         end
     end
 
