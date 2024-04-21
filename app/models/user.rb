@@ -16,7 +16,7 @@ class User < ApplicationRecord
   end
 
   def self.token_for(user)
-    jwt_headers = {exp: 1.hours.from_now.to_i}
+    jwt_headers = {exp: 1.hour.from_now.to_i}
     payload = {id: user.id, email: user.email, role: user.role}
     JWT.encode payload.merge(jwt_headers), Rails.application.credentials.secret_hash_jwt, "HS256"
   end
