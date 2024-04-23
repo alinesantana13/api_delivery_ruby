@@ -19,7 +19,7 @@ RSpec.describe "/stores", type: :request do
   # adjust the attributes here as well.
   let(:user) {
     user = User.new(
-      email: "user@example.com", password: "123456", password_confirmation: "123456"
+      email: "user@example.com", password: "123456", password_confirmation: "123456", role: "seller"
     )
     user.save!
     user
