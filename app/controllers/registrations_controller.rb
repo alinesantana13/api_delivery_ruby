@@ -1,12 +1,7 @@
 class RegistrationsController < ApplicationController
-    skip_forgery_protection only: [:create,  :sign_in, :me, :logout, :canceluser, :unlockuser, :storeslist]
-    before_action :authenticate!, only: [:me]
+    skip_forgery_protection only: [:create,  :sign_in, :me, :logout, :canceluser, :unlockuser]
+    before_action :authenticate!, only: [:me, :logout, :canceluser, :unlockuser]
     rescue_from User::InvalidToken, with: :not_authorized
-
-    def storeslist
-        @stores = Store.all;
-        render json: {"stores": @stores}
-    end
 
     def create
         begin
@@ -117,7 +112,6 @@ class RegistrationsController < ApplicationController
         else
             render json: {message: "Only admins!"}, status: 401
         end
-
     end
 
     private

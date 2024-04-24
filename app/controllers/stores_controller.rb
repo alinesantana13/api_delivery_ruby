@@ -1,6 +1,8 @@
 class StoresController < ApplicationController
-  before_action :authenticate_user!
+  before_action :authenticate_based_on_format!
+  #before_action :authenticate_user!
   before_action :set_store, only: %i[ show edit update destroy ]
+  skip_forgery_protection only:  %i[ show edit create update destroy ]
 
   # GET /stores or /stores.json
   def index
@@ -68,5 +70,13 @@ class StoresController < ApplicationController
     # Only allow a list of trusted parameters through.
     def store_params
       params.require(:store).permit(:name)
+    end
+
+    def authenticate_based_on_format!
+      if request.format.json?
+        authenticate!
+      else
+        authenticate_user!
+      end
     end
 end
