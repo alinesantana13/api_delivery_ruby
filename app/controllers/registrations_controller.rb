@@ -6,13 +6,15 @@ class RegistrationsController < ApplicationController
     def create
         begin
             @user = User.new(user_params)
+            @user.role = current_credential.access
+            
             if @user.save
                 render json: {"email": @user.email}
             else
                 if @user.errors[:email].include?("has already been taken")
                     render json: { error: "The email already exists" }, status: :bad_request
                 else
-                    render json: { errors: @user.errors.full_messages }, status: :unprocessable_entity
+                    render json: { message: "Error" }, status: :unprocessable_entity
                 end
             end
         rescue StandardError => e
@@ -21,9 +23,12 @@ class RegistrationsController < ApplicationController
     end
 
     def sign_in
-        user = User.find_by(email: sign_in_params[:email])
+        access = current_credential.access
+        user = User.where(role: access).find_by(email: sign_in_params[:email])
 
-        if !user || !user.valid_password?(sign_in_params[:password])
+        if !user
+            render json: {message: "Not found"}, status: 401
+        elsif !user.valid_password?(sign_in_params[:password])
             render json: {message: "Incorrect email or password!"}, status: 401
         else
             cancel_user1 = CancelUsers.find_by(user_id: user.id)
@@ -119,7 +124,7 @@ class RegistrationsController < ApplicationController
     def user_params
         params
             .required(:user)
-            .permit(:email, :password, :password_confirmation, :role)
+            .permit(:email, :password, :password_confirmation)
     end
 
     def sign_in_params

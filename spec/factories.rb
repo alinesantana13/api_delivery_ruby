@@ -1,8 +1,13 @@
 FactoryBot.define do
+  factory :credential do
+    access { 1 }
+    key { "MyString" }
+  end
+
     factory :user do
-      email { "example@example.com" }
+      email { Faker::Internet.unique.email }
       password { "123456" }
       password_confirmation { "123456" }
-      role {"seller"}
+      role { :seller }
     end
 end
