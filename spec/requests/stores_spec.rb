@@ -144,4 +144,47 @@ RSpec.describe "/stores", type: :request do
       expect(response).to redirect_to(stores_url)
     end
   end
+
+  context "admin" do 
+    let(:admin){
+      User.create!(
+        email: "admin@example.com",
+        password: "123456",
+        password_confirmation: "123456",
+        role: :admin
+      )
+    }
+
+    before {
+      Store.create!(name: "Store 1", user: user)
+      Store.create!(name: "Store 2", user: user)
+
+      sign_in(admin)
+    }
+
+    describe "GET /index" do
+      it "renders a successful response" do
+        get stores_url
+        expect(response).to be_successful
+        expect(response.body).to include "Store 1"
+        expect(response.body).to include "Store 2"
+      end
+    end
+
+    describe "POST /create" do
+      it "creates a new Store" do
+        store_attributes = {
+          name: "Best Pizza",
+          user_id: user.id
+        }
+
+        expect {
+          post stores_url, params: { store: store_attributes }
+      }.to change(Store, :count).by(1)
+
+      expect(Store.find_by(name: "Best Pizza").user).to eq user
+      end
+    end
+  end
+
 end
