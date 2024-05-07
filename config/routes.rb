@@ -15,6 +15,10 @@ Rails.application.routes.draw do
 
   post "unlockuser", to: "registrations#unlockuser"
 
+  scope :buyers do
+    resources :orders, only: [:index, :create, :update, :destroy]
+  end
+
   root to: "welcome#index"
   
   get "up" => "rails/health#show", as: :rails_health_check

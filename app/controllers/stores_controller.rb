@@ -1,12 +1,20 @@
 class StoresController < ApplicationController
+  skip_forgery_protection only:  %i[ create update ]
   before_action :authenticate!
   before_action :set_store, only: %i[ show edit update destroy ]
-  skip_forgery_protection only:  %i[ show edit create update destroy ]
+
+  rescue_from ActiveRecord::RecordNotFound do |exception|
+    respond_to do |format|
+      format.json { render json: { message: "Store not found"}, status: :not_found }
+      format.html { render file: "#{Rails.root}/public/404.html", layout: false, status: :not_found }
+    end
+  end
 
   # GET /stores or /stores.json
   def index
     if current_user.admin?
-      @stores = Store.all
+      #@stores = Store.all
+      @stores = Store.includes(:user).all
     else
       @stores = Store.where(user: current_user)
     end
@@ -14,11 +22,21 @@ class StoresController < ApplicationController
 
   # GET /stores/1 or /stores/1.json
   def show
+    if  !current_user.admin?
+      @store = current_user.stores.find_by(id: params[:id])
+      if @store.nil?
+        render json: { message: "Store not found"}, status: :not_found
+      end
+    end
   end
 
   # GET /stores/new
   def new
     @store = Store.new
+
+    if current_user.admin?
+      @sellers = User.where(role: :seller)
+    end
   end
 
   # GET /stores/1/edit

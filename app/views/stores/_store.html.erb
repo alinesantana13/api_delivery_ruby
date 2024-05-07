@@ -2,6 +2,7 @@
   <p>
     <strong>Name:</strong>
     <%= store.name %>
+    (<%= store.user.email if store.user %>)
   </p>
 
 </div>
