@@ -2,6 +2,7 @@ class Store < ApplicationRecord
     belongs_to :user
     before_validation :ensure_seller
     validates :name, presence: true, length: {minimum: 3}
+    has_many :products
 
     private
 
