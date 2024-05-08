@@ -1,6 +1,7 @@
 Rails.application.routes.draw do
   devise_for :users
   resources :stores
+
   get "listing" => "products#listing"
 
   post "new" => "registrations#create", as: :create_registration
@@ -14,6 +15,10 @@ Rails.application.routes.draw do
   post "canceluser", to: "registrations#canceluser"
 
   post "unlockuser", to: "registrations#unlockuser"
+
+  scope "stores/:store_id" do
+    resources :products, only: [:index, :create, :update, :destroy]
+  end
 
   scope :buyers do
     resources :orders, only: [:index, :create, :update, :destroy]
