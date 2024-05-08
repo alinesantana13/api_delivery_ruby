@@ -13,8 +13,9 @@ class StoresController < ApplicationController
   # GET /stores or /stores.json
   def index
     if current_user.admin?
-      #@stores = Store.all
       @stores = Store.includes(:user).all
+    elsif current_user.buyer?
+      @stores = Store.all
     else
       @stores = Store.where(user: current_user)
     end
