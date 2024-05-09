@@ -23,8 +23,18 @@ class ProductsController < ApplicationController
     end
 
     def index
-      @product = @store.products.all
-      render json: {products: @product}, status: :ok
+      if current_user.buyer? || current_user.admin?
+        @product = @store.products.all
+        render json: {products: @product}, status: :ok
+      else
+        @store = current_user.stores.find_by(id: params[:store_id])
+        if @store.present? && @store.user_id == current_user.id
+          @products = @store.products
+          render json: {products: @products}, status: :ok
+        else
+          render json: { error: "Store not found or not authorized" }, status: :unauthorized
+        end
+      end
     end
 
     private
