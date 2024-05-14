@@ -3,8 +3,7 @@ class ProductsController < ApplicationController
   before_action :authenticate!
   before_action :set_store
   before_action :check_owner, only: [:create]
-
-    
+  
     def listing
         if !current_user.admin?
             redirect_to root_path, notice: "No permission for you!"
@@ -24,8 +23,7 @@ class ProductsController < ApplicationController
 
     def index
       if current_user.buyer? || current_user.admin?
-        @product = @store.products.all
-        render json: {products: @product}, status: :ok
+        @products = @store.products.all
       else
         @store = current_user.stores.find_by(id: params[:store_id])
         if @store.present? && @store.user_id == current_user.id
