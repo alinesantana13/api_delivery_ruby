@@ -1,10 +1,23 @@
-<p style="color: green"><%= notice %></p>
+<div class="container mt-4">
+  <h1>Store</h1>
+  <p style="color: green"><%= notice %></p>
 
-<%= render @store %>
+  <%= render @store %>
 
-<div>
-  <%= link_to "Edit this store", edit_store_path(@store) %> |
-  <%= link_to "Back to stores", stores_path %>
+  <div>
+    <div>
+      <%= link_to "Edit this store", edit_store_path(@store) %> |
+      <%= link_to "Back to stores", stores_path %>
+    </div>
 
-  <%= button_to "Destroy this store", @store, method: :delete %>
+    <%= button_to "Destroy this store", @store, method: :delete, class: "btn btn-danger p-1 mb-4 mt-4" %>
+
+  <h3>Products</h3>
+    <ul>
+    <% @store.products.each do |product| %>
+      <li><%= product.title %> - R$ <%= number_with_precision(product.price, precision: 2) %></li>
+    <% end %>
+    </ul>
+
+  </div>
 </div>

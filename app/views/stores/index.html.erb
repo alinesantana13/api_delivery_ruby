@@ -1,14 +1,18 @@
-<p style="color: green"><%= notice %></p>
+<%= stylesheet_link_tag 'store' %>
 
-<h1>Stores</h1>
+<div class="container_store m-4">
+  <p style="color: green"><%= notice %></p>
 
-<div id="stores">
-  <% @stores.each do |store| %>
-    <%= render store %>
-    <p>
-      <%= link_to "Show this store", store %>
-    </p>
-  <% end %>
+  <h1>Stores</h1>
+
+  <div id="stores">
+    <% @stores.each do |store| %>
+      <%= render store %>
+      <p>
+        <%= link_to "Show this store", store %>
+      </p>
+    <% end %>
+  </div>
+
+  <%= link_to "New store", new_store_path %>
 </div>
-
-<%= link_to "New store", new_store_path %>
