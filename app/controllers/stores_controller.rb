@@ -1,6 +1,7 @@
 class StoresController < ApplicationController
-  skip_forgery_protection only:  %i[ create update ]
+  skip_forgery_protection only:  %i[ create update destroy]
   before_action :authenticate!
+  before_action :not_buyer_permission, only: %i[ update new destroy  ]
   before_action :set_store, only: %i[ show edit update destroy ]
 
   rescue_from ActiveRecord::RecordNotFound do |exception|
@@ -13,17 +14,17 @@ class StoresController < ApplicationController
   # GET /stores or /stores.json
   def index
     if current_user.admin?
-      @stores = Store.includes(:user).all
+      @stores = Store.includes(:user).where(deleted_at_timestamp: nil)
     elsif current_user.buyer?
-      @stores = Store.all
+      @stores = Store.where(deleted_at_timestamp: nil)
     else
-      @stores = Store.where(user: current_user)
+      @stores = Store.where(user: current_user, deleted_at_timestamp: nil)
     end
   end
 
   # GET /stores/1 or /stores/1.json
   def show
-    if  !current_user.admin?
+    if !current_user.admin?
       @store = current_user.stores.find_by(id: params[:id])
       if @store.nil?
         render json: { message: "Store not found"}, status: :not_found
@@ -77,18 +78,36 @@ class StoresController < ApplicationController
 
   # DELETE /stores/1 or /stores/1.json
   def destroy
-    @store.destroy!
+    begin
+      if current_user.admin? || @store.user_id == current_user.id
+        @store.update(deleted_at_timestamp: Time.current.to_i)
 
-    respond_to do |format|
-      format.html { redirect_to stores_url, notice: "Store was successfully destroyed." }
-      format.json { head :no_content }
+        respond_to do |format|
+          format.html { redirect_to stores_url, notice: "Store was successfully destroyed." }
+          format.json { head :no_content  }
+        end
+      else
+        render json: {message: "Store not found!"}, status: :not_found
+      end
+    rescue StandardError => e
+      respond_to do |format|
+        format.html { redirect_to stores_url, notice: "Error."}
+        format.json { render json: {error: "Internal server error"}, status: :unprocessable_entity }
+      end
     end
   end
 
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_store
-      @store = Store.find(params[:id])
+      @store = Store.where(id: params[:id], deleted_at_timestamp: nil).first
+
+      if @store.nil?
+        respond_to do |format|
+          format.html { redirect_to stores_url, notice: "Store not found!" }
+          format.json { render json: {message: "Store not found!"}, status: :unprocessable_entity }
+        end
+      end
     end
 
     # Only allow a list of trusted parameters through.
@@ -99,6 +118,12 @@ class StoresController < ApplicationController
         required.permit(:name, :user_id)
       else
         required.permit(:name)
+      end
+    end
+
+    def not_buyer_permission
+      if current_user.buyer?
+        render json: {message: "Not authorized"}, status: :unauthorized
       end
     end
 end

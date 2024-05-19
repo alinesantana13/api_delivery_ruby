@@ -23,7 +23,7 @@ class ApplicationController < ActionController::Base
             if user = authenticate_with_http_token { |t, _| User.from_token(t) }
                 @user = user
             else
-                render json: {message: "Not authorized"}, status: 401
+                render json: {message: "Log in or register"}, status: 401
             end
         rescue
             render json: {message: "Not authorized"}, status: 401
