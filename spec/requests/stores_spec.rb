@@ -131,11 +131,11 @@ RSpec.describe "/stores", type: :request do
   end
 
   describe "DELETE /destroy" do
-    it "destroys the requested store" do
+    it "soft destroys the requested store" do
       store = Store.create! valid_attributes
       expect {
         delete store_url(store)
-      }.to change(Store, :count).by(-1)
+      }.to change(Store, :count).by(0)
     end
 
     it "redirects to the stores list" do

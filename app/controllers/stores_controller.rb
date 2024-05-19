@@ -1,7 +1,7 @@
 class StoresController < ApplicationController
   skip_forgery_protection only:  %i[ create update destroy]
   before_action :authenticate!
-  before_action :not_buyer_permission, only: %i[ update new destroy  ]
+  before_action :not_buyer_permission, only: %i[ create update new destroy  ]
   before_action :set_store, only: %i[ show edit update destroy ]
 
   rescue_from ActiveRecord::RecordNotFound do |exception|
@@ -89,7 +89,7 @@ class StoresController < ApplicationController
       else
         render json: {message: "Store not found!"}, status: :not_found
       end
-    rescue StandardError => e
+    rescue StandardError
       respond_to do |format|
         format.html { redirect_to stores_url, notice: "Error."}
         format.json { render json: {error: "Internal server error"}, status: :unprocessable_entity }
@@ -105,7 +105,7 @@ class StoresController < ApplicationController
       if @store.nil?
         respond_to do |format|
           format.html { redirect_to stores_url, notice: "Store not found!" }
-          format.json { render json: {message: "Store not found!"}, status: :unprocessable_entity }
+          format.json { render json: {message: "Store not found!"}, status: :not_found }
         end
       end
     end
