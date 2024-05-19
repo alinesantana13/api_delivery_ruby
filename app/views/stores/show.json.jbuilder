@@ -1,1 +1,1 @@
-json.partial! "stores/store", store: @store
+json.extract! @store, :id, :name, :user_id

@@ -1,33 +1,20 @@
 require 'rails_helper'
 
 RSpec.describe "stores/edit", type: :view do
+  let(:user){FactoryBot.create(:user, :seller)}
   let(:store) {
     Store.create!(
-      name: "MyString", user: @user = login_user
+      name: "MyString", user: user
     )
   }
 
-  let(:admin) {
-      User.create!(
-        email: "admin@example.com",
-        password: "123456",
-        password_confirmation: "123456",
-        role: :admin
-      )
-  }
+  let(:admin) { FactoryBot.create(:user, :admin) }
 
   before(:each) do
     assign(:store, store)
     @sellers = [
-      User.create(email: "seller1@example.com",
-        password: "123456",
-        password_confirmation: "123456",
-        role: :seller), 
-      User.create(
-        email: "seller2@example.com",
-        password: "123456",
-        password_confirmation: "123456",
-        role: :seller)]
+      FactoryBot.create(:user, :seller), 
+      FactoryBot.create(:user, :seller)]
     assign(:sellers, @sellers)
   end
 
