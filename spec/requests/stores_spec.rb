@@ -25,6 +25,10 @@ RSpec.describe "/stores", type: :request do
     user
   }
 
+  let(:seller) { FactoryBot.create(:user, :seller) }
+  let(:admin) { FactoryBot.create(:user, :admin) }
+  let(:store) { FactoryBot.create(:store, user: seller) }
+
   let(:valid_attributes) {
     {name: "Great Restaurant", user: user}
   }
@@ -142,6 +146,24 @@ RSpec.describe "/stores", type: :request do
       store = Store.create! valid_attributes
       delete store_url(store)
       expect(response).to redirect_to(stores_url)
+    end
+
+    context "as a admin" do
+      it "redirects to stores_url with notice when trying to delete a non-existent store" do
+          sign_in admin
+
+          delete store_url(9999) 
+          expect(response).to redirect_to(stores_url)
+          expect(flash[:notice]).to eq("Store not found!")
+      end
+
+      it "admin deletes existing store" do
+          sign_in admin
+
+          delete store_url(store) 
+          expect(response).to redirect_to(stores_url)
+          expect(flash[:notice]).to eq("Store was successfully destroyed.")
+      end
     end
   end
 

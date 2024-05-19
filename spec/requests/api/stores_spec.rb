@@ -1,7 +1,6 @@
 require "rails_helper"
 
 RSpec.describe "/stores", type: :request do
-    let(:admin) { FactoryBot.create(:user, :admin) }
     let(:seller) { FactoryBot.create(:user, :seller) }
     let(:seller_verify) { FactoryBot.create(:user, :seller) }
     let(:buyer) { FactoryBot.create(:user, :buyer) }
@@ -28,6 +27,12 @@ RSpec.describe "/stores", type: :request do
             json = JSON.parse(response.body)
             
             expect(json["name"]).to eq "New Store"
+        end
+
+        context "as a buyer" do
+        end
+
+        context "as a seller" do
         end
     end
 
@@ -97,25 +102,7 @@ RSpec.describe "/stores", type: :request do
                 expect(JSON.parse(response.body)['message']).to eq('Store not found!')
             end
             
-        end
-
-        context "as a admin" do
-            it "redirects to stores_url with notice when trying to delete a non-existent store" do
-                sign_in admin
-
-                delete store_url(9999) 
-                expect(response).to redirect_to(stores_url)
-                expect(flash[:notice]).to eq("Store not found!")
-            end
-
-            it "admin deletes existing store" do
-                sign_in admin
-
-                delete store_url(store) 
-                expect(response).to redirect_to(stores_url)
-                expect(flash[:notice]).to eq("Store was successfully destroyed.")
-            end
-        end
+        end 
 
     end
 end
