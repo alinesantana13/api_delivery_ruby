@@ -1,13 +1,15 @@
-<h1>Welcome to Delivery!</h1>
+<div>
+    <h1 class="mt-4">Welcome to Delivery!</h1>
 
-<p style="color: green"> <%= notice %> </p>
+    <p style="color: green"> <%= notice %> </p>
 
-<% if current_user %>
-    <p>Logged in as <strong><%= current_user.email %></strong></p>
-    <%= button_to "Sign out", destroy_user_session_path, method: :delete, class: "btn btn-info" %>
-<% else %>
-    <%= link_to "Sign in", new_user_session_path, class: "btn btn-primary p-1" %>
-    or
-    <%= link_to "Sign up",  new_user_registration_path, class: "btn btn-primary p-1" %>
+    <% if current_user %>
+        <p>Logged in as <strong><%= current_user.email %></strong></p>
+        <%= button_to "Sign out", destroy_user_session_path, method: :delete, class: "btn btn-info" %>
+    <% else %>
+        <%= link_to "Sign in", new_user_session_path, class: "btn btn-primary p-2" %>
+        or
+        <%= link_to "Sign up",  new_user_registration_path, class: "btn btn-primary p-2" %>
 
-<% end %>
+    <% end %>
+</div>

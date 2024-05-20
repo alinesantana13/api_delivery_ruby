@@ -24,8 +24,8 @@ class StoresController < ApplicationController
 
   # GET /stores/1 or /stores/1.json
   def show
-    if !current_user.admin?
-      @store = current_user.stores.find_by(id: params[:id])
+    if current_user.seller?
+      @store = current_user.stores.find_by(id: params[:id], deleted_at_timestamp: nil)
       if @store.nil?
         render json: { message: "Store not found"}, status: :not_found
       end

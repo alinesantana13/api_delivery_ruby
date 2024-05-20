@@ -147,36 +147,9 @@ RSpec.describe "/stores", type: :request do
       delete store_url(store)
       expect(response).to redirect_to(stores_url)
     end
-
-    context "as a admin" do
-      it "redirects to stores_url with notice when trying to delete a non-existent store" do
-          sign_in admin
-
-          delete store_url(9999) 
-          expect(response).to redirect_to(stores_url)
-          expect(flash[:notice]).to eq("Store not found!")
-      end
-
-      it "admin deletes existing store" do
-          sign_in admin
-
-          delete store_url(store) 
-          expect(response).to redirect_to(stores_url)
-          expect(flash[:notice]).to eq("Store was successfully destroyed.")
-      end
-    end
   end
 
   context "admin" do 
-    let(:admin){
-      User.create!(
-        email: "admin@example.com",
-        password: "123456",
-        password_confirmation: "123456",
-        role: :admin
-      )
-    }
-
     before {
       Store.create!(name: "Store 1", user: user)
       Store.create!(name: "Store 2", user: user)
@@ -193,6 +166,16 @@ RSpec.describe "/stores", type: :request do
       end
     end
 
+    describe "GET /show" do
+      it "admin can see store" do
+        get "/stores/#{store.id}"
+        expect(response).to be_successful
+        
+        delete "/stores/#{store.id}"
+        expect(flash[:notice]).to eq("Store was successfully destroyed.")
+      end
+    end
+
     describe "POST /create" do
       it "creates a new Store" do
         store_attributes = {
@@ -205,6 +188,22 @@ RSpec.describe "/stores", type: :request do
       }.to change(Store, :count).by(1)
 
       expect(Store.find_by(name: "Best Pizza").user).to eq user
+      end
+    end
+
+    describe "DELETE /destroy" do
+      it "redirects to stores_url with notice when trying to delete a non-existent store" do
+
+          delete store_url(9999) 
+          expect(response).to redirect_to(stores_url)
+          expect(flash[:notice]).to eq("Store not found!")
+      end
+
+      it "admin deletes existing store" do
+
+          delete store_url(store) 
+          expect(response).to redirect_to(stores_url)
+          expect(flash[:notice]).to eq("Store was successfully destroyed.")
       end
     end
   end

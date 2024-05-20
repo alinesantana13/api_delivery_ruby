@@ -11,12 +11,12 @@
     </div>
   <% end %>
 
-  <div>
-    <%= form.label :name, style: "display: block" %>
-    <%= form.text_field :name %>
+  <div >
+    <%= form.label :name, style: "display: block", class: "mb-2" %>
+    <%= form.text_field :name, class: "form-control mb-4" %>
   </div>
 
-  <% if current_user.admin? %>
+  <% if current_user.admin? && @store.new_record? %>
   <div>
     <%= form.label :seller, style: "display: block" %>
     <%= form.collection_select :user_id, @sellers, :id, :email, prompt: "Sellers..."%>
