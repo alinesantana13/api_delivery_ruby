@@ -5,16 +5,13 @@ Rails.application.routes.draw do
   get "listing" => "products#listing"
 
   post "new" => "registrations#create", as: :create_registration
-
   get "me" => "registrations#me"
-
   post "sign_in" => "registrations#sign_in"
-
   post "logout", to: "registrations#logout"
-
   post "canceluser", to: "registrations#canceluser"
-
   post "unlockuser", to: "registrations#unlockuser"
+
+  resources :users, only: [:index, :show, :update, :destroy]
 
   scope "stores/:store_id" do
     resources :products, only: [:index, :create, :update, :destroy]

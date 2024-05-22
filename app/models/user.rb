@@ -1,12 +1,22 @@
 class User < ApplicationRecord
+  # Custom exceptions
   class InvalidToken < StandardError; end
+
+  # Validations
   validates :email, presence: true
   validates :password, presence: true
   validates :role, presence: true
 
+  # Enum for role column
   enum :role, [:admin, :seller, :buyer]
+
+  # Relationships
   has_many :stores
 
+  # Discard inclusion
+  include Discard::Model
+
+  # Devise settings
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
 
