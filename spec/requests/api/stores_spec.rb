@@ -184,7 +184,7 @@ RSpec.describe "/stores", type: :request do
 
     describe "PUT /update" do
       context "as a seller" do
-          it "seller create store" do
+          it "seller update store" do
             store = Store.create!(name: "New Store", user: seller)
             store_name = store.name
               put(
@@ -210,7 +210,7 @@ RSpec.describe "/stores", type: :request do
 
       context "as a buyer" do
           it "
-          buyer trying to create store" do
+          buyer trying to update store" do
             store = Store.create!(name: "New Store", user: seller)
               put(
                   "/stores/#{store.id}", 
