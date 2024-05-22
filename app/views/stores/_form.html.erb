@@ -16,7 +16,7 @@
     <%= form.text_field :name, class: "form-control mb-4" %>
   </div>
 
-  <% if current_user.admin? && @store.new_record? %>
+  <% if current_user.admin? %>
   <div>
     <%= form.label :seller, style: "display: block" %>
     <%= form.collection_select :user_id, @sellers, :id, :email, prompt: "Sellers..."%>

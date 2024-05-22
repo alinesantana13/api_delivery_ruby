@@ -43,6 +43,9 @@ class StoresController < ApplicationController
 
   # GET /stores/1/edit
   def edit
+    if current_user.admin?
+      @sellers = User.where(role: :seller)
+    end
   end
 
   # POST /stores or /stores.json
