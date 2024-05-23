@@ -14,7 +14,7 @@ class StoresController < ApplicationController
   # GET /stores or /stores.json
   def index
     if current_user.admin?
-      @stores = Store.includes(:user).where(deleted_at_timestamp: nil)
+      @stores = Store.includes(:user).where(deleted_at_timestamp: nil).order(:name).page(params[:page])
     elsif current_user.buyer?
       @stores = Store.where(deleted_at_timestamp: nil)
     else

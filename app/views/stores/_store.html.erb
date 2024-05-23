@@ -1,8 +1,13 @@
-<div id="<%= dom_id store %>">
+<div class="container_store d-flex flex-column p-2" id="<%= dom_id store %>">
   <p>
+    <div class="mb-2">
     <strong>Name:</strong>
     <%= store.name %>
-    (<%= store.user.email if store.user %>)
+    </div>
+    <div>
+    <strong>Email:</strong>
+    <%= store.user.email if store.user %>
+    </div>
   </p>
-
 </div>
+

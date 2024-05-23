@@ -1,9 +1,12 @@
-<div class="container mt-4">
-  <h1>Store</h1>
-  <p style="color: green"><%= notice %></p>
-
-  <%= render @store %>
-
+<div class="container_store_show mt-4">
+  <div class="container_store_show_sep">
+    <div>
+      <h1>Store</h1>
+      <p style="color: green"><%= notice %></p>
+      <%= render @store %>
+    </div>
+  <img class="container_store_show_img" src="<%= asset_path 'chef.jpg' %>"/>
+  </div>
   <div>
     <div>
       <%= link_to "Edit this store", edit_store_path(@store) %> |
@@ -21,3 +24,40 @@
 
   </div>
 </div>
+
+<style>
+  main{
+    justify-content: center;
+    background-image: url('<%= asset_path 'chef.jpg' %>');
+  }
+
+  .container_store_show{
+    display: flex;
+    flex-direction: column;
+    background-color: rgba(255, 255, 255, 0.7);;
+    border-radius: 1rem;
+    margin-bottom: 1rem;
+    padding: 1rem;
+  }
+
+  .container_store_show_img {
+    width: 250px;
+    border-radius: 1rem;
+  }
+
+  @media (min-width:600px){
+    .container_store_show{ 
+      width: 600px;
+      margin-left: 2rem;
+    }
+
+    .container_store_show_sep{
+      display: flex;
+      justify-content: space-between;
+    }
+
+    main{
+      justify-content: start;
+      }
+  }
+</style>

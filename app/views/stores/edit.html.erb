@@ -1,36 +1,45 @@
 <div class="container_edit d-flex">
-  <div class="container_edit_form d-flex flex-column justify-content-center align-items-center align-self-center">
+  <div class="container_edit_form d-flex flex-column justify-content-center align-self-center">
     <h1>Editing store</h1>
 
     <%= render "form", store: @store %>
 
-    <div class="container_edit_links row d-flex justify-content-center align-items-center">
-      <div class="col-6 col-lg-6 ">
+  <div class="container_edit_links d-flex flex-column align-items-center">
         <%= link_to "Show this store", @store %>
-      </div>
-      <div class="col-1 col-lg-1 ">|</div>
-      <div class="col-5 col-lg-5">
         <%= link_to "Back to stores", stores_path %>
-      </div>
-    </div>
   </div>
 </div>
 
 <style>
+  main{
+    justify-content: center;
+    background-image: url('<%= asset_path 'chef.jpg' %>');
+  }
 .container_edit{
   height: 500px;
   justify-content: center;
 }
 .container_edit_form{
-  width: 400px;
+  width: 250px;
   height: 400px;
   gap: 30px;
-  background-color: aqua;
-  border-radius: 20px
+  background-color: rgba(255, 255, 255, 0.7);
+  border-radius: 20px;
+  padding: 1rem;
 }
 
-.container_edit_links {
-  width: 300px;
-}
+  @media (min-width:600px){
+    main {
+      justify-content: start;
+    }
+    .container_edit{
+      margin-left: 2rem;
+      width: 400px;
+    }
+
+    .container_edit_form{
+      width: 500px;
+    }
+  }
 
 </style>

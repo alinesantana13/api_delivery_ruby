@@ -32,7 +32,7 @@ class UsersController < ApplicationController
     if @user_params_id.discard
         render json: { message: "User successfully deleted" }, status: :ok
     else
-        render json: { message: "Not found" }, status: :not_found
+        render json: { message: "Error" }, status: :unprocessable_entity
     end
   end
 

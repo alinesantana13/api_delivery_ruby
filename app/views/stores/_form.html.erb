@@ -17,13 +17,13 @@
   </div>
 
   <% if current_user.admin? %>
-  <div>
-    <%= form.label :seller, style: "display: block" %>
-    <%= form.collection_select :user_id, @sellers, :id, :email, prompt: "Sellers..."%>
+  <div class="mb-2">
+    <%= form.label :seller, style: "display: block", class: "mb-2" %>
+    <%= form.collection_select :user_id, @sellers, :id, :email, prompt: "Sellers..." %>
   </div>
   <% end %>
   
   <div>
-    <%= form.submit %>
+    <%= form.submit class: "btn btn-primary mt-2" %>
   </div>
 <% end %>
