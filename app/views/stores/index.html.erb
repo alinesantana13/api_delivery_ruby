@@ -1,18 +1,79 @@
 <%= stylesheet_link_tag 'store' %>
 
-<div class="container_store m-4">
-  <p style="color: green"><%= notice %></p>
+<div class="container_stores m-4">
+  <p class="d-flex justify-content-center pt-2" style="color: green"><%= notice %></p>
 
-  <h1>Stores</h1>
+  <h1 class="container_stores_title">Stores</h1>
 
-  <div id="stores">
+  <div class="container_stores_current" id="stores">
     <% @stores.each do |store| %>
-      <%= render store %>
+    <div class="container_stores_store mb-1">
+      <%= render store  %>
+      
       <p>
-        <%= link_to "Show this store", store %>
+        <%= link_to "Show this store", store, class: "d-flex justify-content-center" %>
       </p>
+    </div>
     <% end %>
   </div>
-
-  <%= link_to "New store", new_store_path %>
+  <div class="d-flex justify-content-center">
+    <%= paginate @stores %>
+  </div>
+  <div class="d-flex justify-content-center mb-3">
+    <%= link_to "New store", new_store_path %>
+  </div>
 </div>
+
+<style>
+  main{
+    display: flex;
+    justify-content:center;
+  }
+  .container_stores{
+    background-color: rgba(255, 255, 255, 0.7);
+    border-radius: 1rem;
+  }
+
+  .container_stores_title{
+    padding-left: 2rem;
+  }
+  .container_stores_current{
+    justify-content:center;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+
+  .container_stores_store{
+    background-color: rgb(255, 0, 0, 0.8);
+    border-radius: 1rem;
+    color: #FFFFFF;
+  }
+
+  @media (min-width:600px){
+    main {
+      justify-content: start;
+    }
+    
+    .container_stores{
+      width: 800px;
+    }
+
+  .container_stores_current{
+    display:flex;
+    flex-wrap: wrap;
+  }
+
+  .container_stores_store{
+    display: flex;
+    flex-direction: column;
+    margin-left:1rem;
+    width: 300px;
+  }
+
+  main{
+      display: flex;
+      justify-content: start;
+      background-repeat: no-repeat;
+    }
+  }
+</style>
