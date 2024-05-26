@@ -1,4 +1,5 @@
 require 'rails_helper'
+include ActionView::Helpers::NumberHelper
 
 RSpec.describe "Products API", type: :request do
   let(:buyer) {
@@ -29,13 +30,13 @@ RSpec.describe "Products API", type: :request do
       get(
         "/stores/#{store.id}/products",
         headers: {
-          "Accept" => "application/json", 
+          "Accept" => "application/json",
           "X-API-KEY" => credential.key,
           "Authorization" => "Bearer #{signed_in["token"]}"
         }
       )
 
-      expect(JSON.parse(response.body)).to eq( "products" => [] )
+      expect(JSON.parse(response.body)).to eq( {"result" => {"products" => []}} )
     end
 
     it "returns a list of products" do
@@ -44,20 +45,18 @@ RSpec.describe "Products API", type: :request do
       get(
         "/stores/#{store.id}/products",
         headers: {
-          "Accept" => "application/json", 
+          "Accept" => "application/json",
           "X-API-KEY" => credential.key,
           "Authorization" => "Bearer #{signed_in["token"]}"
         }
       )
 
-      expect(JSON.parse(response.body)).to eq( {"products" => [{
+      expect(JSON.parse(response.body)).to eq( {"result" => {"products" => [{
         "id" => product.id,
         "store_id" => store.id,
         "title" => product.title,
-        "price" => product.price.to_s
-      }]} )
+        "price" => number_to_currency(product.price)
+      }]}} )
     end
   end
-
-
 end

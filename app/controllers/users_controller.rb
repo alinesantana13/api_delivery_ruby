@@ -1,8 +1,8 @@
 class UsersController < ApplicationController
   skip_forgery_protection only: [:show, :update, :destroy]
   before_action :authenticate!
+  before_action :chech_admin, only: [:index, :new, :create]
   before_action :set_user, only: [:show, :update, :destroy, :edit]
-  before_action :is_admin!, only: [:index, :new, :create]
   rescue_from User::InvalidToken, with: :not_authorized
 
   # GET /users/new
@@ -93,6 +93,12 @@ class UsersController < ApplicationController
           format.json { render json: {message: "User not found!"}, status: :not_found}
         end
       end
+    end
+  end
+
+  def chech_admin
+    if !is_admin!
+      render json: {message: "User does not have permission!"}, status: :forbidden
     end
   end
 end

@@ -1,12 +1,84 @@
-<h1>Product Listing</h1>
-
-<div>
-    <% @products.each do |product| %>
-    <div>
-        <h3><%= product.title %>: R$ <%= product.price %></h3>
-        <p>Store: <%= product.store.name %></p>
-
-    </div>
-    <hr />
-    <% end %>
+<div class="container_products mt-2">
+  <h2 class="container_products_title">Product Listing</h2>
+  <p style="color: red"> <%= notice %> </p>
+  <div class="container_product_table">
+    <table class="table table-bordered">
+      <thead>
+        <tr class="row">
+          <td class="col-6">Title</td>
+          <td class="col-2">Price</td>
+          <td class="col-2">Store</td>
+          <td class="col-1">Edit</td>
+          <td class="col-1">Delete</td>
+        </tr>
+      </thead>
+      <tbody>
+        <% @products.each do |product| %>
+          <tr class="row">
+            <td class="col-6 d-flex"><%= link_to product.title, store_product_path(product.store, product) %></td>
+            <td class="col-2 d-flex justify-content-center"><%= number_to_currency(product.price, precision: 2) %></td>
+            <td class="col-2 d-flex justify-content-center"><%= product.store.name %></td>
+            <td class="col-1 d-flex justify-content-center">
+              <%= link_to edit_store_product_path(product.store, product), class: "btn btn-warning p-0" do %>
+              <img src="<%= asset_path 'edit.png' %>" alt="Edit" class="container_product_icon edit-icon">
+              <% end %>
+            </td>
+            <td class="col-1 d-flex justify-content-center">
+              <%= button_to store_product_path(product.store, product), method: :delete, class: "btn btn-danger p-0" do %>
+              <%= image_tag("delete.png", alt: "Destroy", class: "container_product_icon destroy-icon") %>
+              <% end %>
+            </td>
+            </tr>
+        <% end %>
+        </tbody>
+      </table>
+  </div>
+  <div class="d-flex justify-content-center">
+    <%= paginate @products %>
+  </div>
 </div>
+
+<style>
+  main{
+    background-image: url('<%= asset_path 'chef.jpg' %>');
+  }
+
+
+  .container_product_table{
+    margin-left: 1rem;
+    width: 700px;
+    height: 530px;
+  }
+
+  .container_products_title {
+    color: #FFFFFF;
+  }
+
+  .container_product_icon {
+    width: 25px;
+  }
+
+  @media (max-width: 500px) {
+    .container_product_table {
+      width: 270px;
+      height: 500px;
+      font-size: 0.7rem;
+      padding: 1rem;
+    }
+      .container_product_icon {
+      width: 15px;
+    }
+  }
+
+  @media (min-width: 500px) and (max-width: 800px) {
+    .container_product_table {
+      width: 470px;
+      height: 500px;
+      font-size: 0.7rem;
+      padding: 1rem;
+    }
+      .container_product_icon {
+      width: 15px;
+    }
+  }
+</style>

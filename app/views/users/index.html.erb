@@ -2,10 +2,10 @@
   <h2 class="container_users_title">Users</h2>
   <p style="color: red"> <%= notice %> </p>
   <div class="container_user_table">
-    <table class="table p-3 table-bordered border-dark">
+    <table class="table p-3 table-bordered">
       <thead>
         <tr class="row">
-          <td class="col-8 px-4">Email</td>
+          <td class="col-8">Email</td>
           <td class="col-2">Edit</td>
           <td class="col-2">Delete</td>
         </tr>
@@ -13,7 +13,7 @@
       <tbody>
         <% @users.each do |user| %>
           <tr class="row">
-            <td class="col-8 d-flex px-4"><%= link_to user.email, user %></td>
+            <td class="col-8 d-flex"><%= link_to user.email, user %></td>
             <td class="col-2 d-flex justify-content-center">
               <%= link_to edit_user_path(user), class: "btn btn-warning p-1" do %>
                 <img src="<%= asset_path 'edit.png' %>" alt="Edit" class="container_user_icon edit-icon">
@@ -45,14 +45,8 @@
 
   .container_user_table{
     margin-left: 1rem;
-    margin-right: 1rem;
     width: 500px;
     height: 590px;
-  }
-
-  .table-bordered {
-    border-radius: 10px;
-    overflow: hidden;
   }
 
   .container_users_title {
@@ -61,5 +55,27 @@
 
   .container_user_icon {
     width: 25px;
+  }
+
+    @media (max-width: 500px) {
+    .container_user_table {
+      width: 270px;
+      font-size: 0.7rem;
+      padding: 1rem;
+    }
+      .container_user_icon {
+      width: 15px;
+    }
+  }
+
+  @media (min-width: 500px) and (max-width: 800px) {
+    .container_user_table {
+      width: 470px;
+      font-size: 0.7rem;
+      padding: 1rem;
+    }
+      .container_user_icon {
+      width: 15px;
+    }
   }
 </style>

@@ -1,12 +1,12 @@
-<div class="container_edit d-flex">
-  <div class="container_edit_form d-flex flex-column justify-content-center align-self-center">
-    <h1>Editing product</h1>
+<div class="container_new">
+  <div class="container_new_form">
+    <h1>New product</h1>
 
     <%= render "form", product: @product %>
 
-  <div class="container_edit_links d-flex flex-column align-items-center">
-    <%= link_to "Show this product", store_product_path(@store, @product) %>
-    <%= link_to "Back to products", store_path(@store) %>
+    <div class="container_edit_links d-flex flex-column align-items-center">
+      <%= link_to "Back to products", store_path(@store) %>
+    </div>
   </div>
 </div>
 
@@ -15,11 +15,13 @@
     justify-content: center;
     background-image: url('<%= asset_path 'chef.jpg' %>');
   }
-.container_edit{
+.container_new{
+  display: flex;
   height: 500px;
   justify-content: center;
+  padding-top: 2rem;
 }
-.container_edit_form{
+.container_new_form{
   width: 250px;
   height: 400px;
   gap: 30px;
@@ -29,15 +31,16 @@
 }
 
   @media (min-width:600px){
-    main {
+    main{
       justify-content: start;
     }
-    .container_edit{
+    .container_new{
+      justify-content: start;
       margin-left: 2rem;
       width: 400px;
     }
 
-    .container_edit_form{
+    .container_new_form{
       width: 500px;
     }
   }

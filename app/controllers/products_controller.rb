@@ -2,17 +2,18 @@ class ProductsController < ApplicationController
   skip_forgery_protection
   before_action :authenticate!
   before_action :set_locale!
-  before_action :set_store,  only: [:index, :new, :create, :edit, :update, :destroy, :show]
+  before_action :set_store, except: [:listing]
   before_action :set_product, only: [:edit, :update, :destroy, :show]
-  before_action :check_owner, only: [:create]
+  before_action :seller_or_admin, only: [:create, :edit, :update, :destroy]
 
   #Falta colocar que a credential e obrigatória passar para os perfis de seller e buyer
 
   def listing
+    page = params.fetch(:page, 1)
     if !current_user.admin?
       redirect_to root_path, notice: "No permission for you!"
     end
-    @products = Product.includes(:store)
+    @products = Product.includes(:store).page(page)
   end
 
   def new
@@ -22,22 +23,27 @@ class ProductsController < ApplicationController
   def create
     @product = @store.products.build(product_params)
     if @product.save
-      render json: {"id": @product.id, "title": @product.title, "price": @product.price}, status: 201
+      respond_to do |format|
+        format.html { redirect_to store_path(@store), notice: "Product was created." }
+        format.json { render json: {"id": @product.id, "title": @product.title, "price": @product.price}, status: :created}
+      end
     else
       render json: {errors: @product.errors}, status: :unprocessable_entity
     end
+
+
   end
 
   def index
     page = params.fetch(:page, 1)
     if is_buyers! || current_user.admin?
-      @products = @store.products.kept.where(id: params[:id])
+      @products = @store.products.kept.page(page)
     else
       @store = current_user.stores.find_by(id: params[:store_id])
       if @store.present?
         @products = @store.products.kept.page(page)
       else
-        render json: { error: "Store not found or not authorized #{@store.id}" }, status: :forbidden
+        render json: { error: "Store not found or not authorized #{is_buyers!}" }, status: :forbidden
       end
     end
   end
@@ -97,9 +103,9 @@ class ProductsController < ApplicationController
     params.require(:product).permit(:title, :price)
   end
 
-  def check_owner
-    if current_user.id != @store.user_id
-      render json: {message: "Not authorized"}, status: :unauthorized
+  def seller_or_admin
+    if !is_admin! && !is_seller! && current_user.id != @store.user_id
+      render json: {message: "Not authorizeaaad"}, status: :unauthorized
     end
   end
 end
