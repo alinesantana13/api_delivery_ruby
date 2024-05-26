@@ -4,7 +4,8 @@ class User < ApplicationRecord
 
   # Validations
   validates :email, presence: true
-  validates :password, presence: true
+  validates :password, presence: true, on: :create
+  validates :password, confirmation: true, if: -> { password.present? }
   validates :role, presence: true
 
   # Enum for role column

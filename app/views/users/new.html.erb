@@ -1,0 +1,48 @@
+<div class="container_new">
+  <div class="container_new_form">
+    <h1>New User</h1>
+
+    <%= render "form", user: @user_new %>
+
+    <div class="d-flex flex-column align-items-center mt-4">
+      <%= link_to "Back to users", users_path %>
+    </div>
+  </div>
+</div>
+
+<style>
+  main{
+    justify-content: center;
+    background-image: url('<%= asset_path 'chef.jpg' %>');
+  }
+.container_new{
+  display: flex;
+  height: 500px;
+  justify-content: center;
+  padding-top: 2rem;
+}
+.container_new_form{
+  width: 250px;
+  height: 500px;
+  gap: 30px;
+  background-color: rgba(255, 255, 255, 0.7);
+  border-radius: 20px;
+  padding: 1rem;
+}
+
+  @media (min-width:600px){
+    main{
+      justify-content: start;
+    }
+    .container_new{
+      justify-content: start;
+      margin-left: 2rem;
+      width: 400px;
+    }
+
+    .container_new_form{
+      width: 500px;
+    }
+  }
+
+</style>

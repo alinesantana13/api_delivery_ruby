@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
-  devise_for :users
+  devise_for :users, only: [:sessions, :passwords] #Add registrations if necessary
+
   resources :stores
 
   get "listing" => "products#listing"
@@ -11,7 +12,7 @@ Rails.application.routes.draw do
   post "canceluser", to: "registrations#canceluser"
   post "unlockuser", to: "registrations#unlockuser"
 
-  resources :users, only: [:index, :show, :update, :destroy]
+  resources :users, only: [:index, :show, :new, :create, :edit, :update, :destroy ]
 
   resources :stores do
     resources :products, only: [:index, :show, :create, :update, :destroy, :edit]
@@ -22,6 +23,6 @@ Rails.application.routes.draw do
   end
 
   root to: "welcome#index"
-  
+
   get "up" => "rails/health#show", as: :rails_health_check
 end

@@ -1,0 +1,45 @@
+<div class="container_edit d-flex mt-5">
+  <div class="container_edit_form d-flex flex-column justify-content-center align-self-center">
+    <h1>Editing user</h1>
+
+    <%= render "form", user: @user_params_id%>
+
+  <div class="container_edit_links d-flex flex-column align-items-center">
+        <%= link_to "Show this user", @user_params_id %>
+        <%= link_to "Back to users", users_path %>
+  </div>
+</div>
+
+<style>
+  main{
+    justify-content: center;
+    background-image: url('<%= asset_path 'chef.jpg' %>');
+  }
+.container_edit{
+  height: 500px;
+  justify-content: center;
+}
+.container_edit_form{
+  width: 250px;
+  height: 550px;
+  gap: 30px;
+  background-color: rgba(255, 255, 255, 0.7);
+  border-radius: 20px;
+  padding: 1rem;
+}
+
+  @media (min-width:600px){
+    main {
+      justify-content: start;
+    }
+    .container_edit{
+      margin-left: 2rem;
+      width: 400px;
+    }
+
+    .container_edit_form{
+      width: 500px;
+    }
+  }
+
+</style>
