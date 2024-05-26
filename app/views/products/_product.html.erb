@@ -1,0 +1,13 @@
+<div class="d-flex flex-column p-2" id="<%= dom_id product %>">
+  <p>
+    <div class="mb-2">
+    <strong>Title:</strong>
+    <%= product.title %>
+    </div>
+    <div>
+    <strong>Price:</strong>
+    <%= number_to_currency(product.price) %>
+    </div>
+  </p>
+</div>
+
