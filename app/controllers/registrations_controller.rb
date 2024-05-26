@@ -1,30 +1,30 @@
 class RegistrationsController < ApplicationController
-    skip_forgery_protection only: [:create,  :sign_in, :me, :logout, :canceluser, :unlockuser]
-    before_action :authenticate!, only: [:me, :logout, :canceluser, :unlockuser]
-    rescue_from User::InvalidToken, with: :not_authorized
+  skip_forgery_protection only: [:create,  :sign_in, :me, :logout, :canceluser, :unlockuser]
+  before_action :authenticate!, only: [:me, :logout, :canceluser, :unlockuser, :destroy]
+  rescue_from User::InvalidToken, with: :not_authorized
 
-    def create
-        begin
-            @user = User.new(user_params)
-            @user.role = current_credential.access
-            
-            if @user.save
-                render json: {"email": @user.email}
-            else
-                if @user.errors[:email].include?("has already been taken")
-                    render json: { error: "The email already exists" }, status: :bad_request
-                else
-                    render json: { message: "Error" }, status: :unprocessable_entity
-                end
-            end
-        rescue StandardError => e
-            render json: { error: "#{e.message}" }, status: :internal_server_error
+  def create
+    begin
+      @user = User.new(user_params)
+      @user.role = current_credential.access
+
+      if @user.save
+        render json: {"email": @user.email}
+      else
+        if @user.errors[:email].include?("has already been taken")
+          render json: { error: "The email already exists" }, status: :bad_request
+        else
+          render json: { message: "Error" }, status: :unprocessable_entity
         end
+      end
+    rescue StandardError => e
+      render json: { error: "#{e.message}" }, status: :internal_server_error
     end
+  end
 
     def sign_in
         access = current_credential.access
-        user = User.where(role: access).find_by(email: sign_in_params[:email])
+        user = User.kept.where(role: access).find_by(email: sign_in_params[:email])
 
         if !user
             render json: {message: "Not found"}, status: 401
@@ -37,7 +37,7 @@ class RegistrationsController < ApplicationController
             else
                 token = User.token_for(user)
             render json: {email: user.email, token: token}
-            end  
+            end
         end
     end
 
@@ -73,7 +73,7 @@ class RegistrationsController < ApplicationController
         #verifica se o tempo do token expirou
         # decoded_token= JWT.decode token, Rails.application.credentials.secret_hash_jwt, true, {algorithm: "HS256"}
         # exp_timestamp = decoded_token.first['exp'].to_i
-        # current_timestamp = Time.now.to_i 
+        # current_timestamp = Time.now.to_i
     end
 
     def canceluser
@@ -119,21 +119,25 @@ class RegistrationsController < ApplicationController
         end
     end
 
-    private
-    
-    def user_params
-        params
-            .required(:user)
-            .permit(:email, :password, :password_confirmation)
+    def destroy
+      #implementar lógica para o admin
     end
 
-    def sign_in_params
-        params
-        .required(:login)
-        .permit(:email, :password)
-    end
+  private
 
-    def not_authorized(e)
-        render json: {message: "Nope!"}, status: 401
-    end
+  def user_params
+    params
+      .required(:user)
+      .permit(:email, :password, :password_confirmation)
+  end
+
+  def sign_in_params
+    params
+      .required(:login)
+      .permit(:email, :password)
+  end
+
+  def not_authorized(e)
+    render json: {message: "Nope!"}, status: 401
+  end
 end

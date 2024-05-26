@@ -13,12 +13,13 @@ class StoresController < ApplicationController
 
   # GET /stores or /stores.json
   def index
+    page = params.fetch(:page, 1)
     if current_user.admin?
-      @stores = Store.includes(:user).where(deleted_at_timestamp: nil).order(:name).page(params[:page])
+      @stores = Store.includes(:user).where(deleted_at_timestamp: nil).order(:name).page(page)
     elsif current_user.buyer?
-      @stores = Store.where(deleted_at_timestamp: nil)
+      @stores = Store.where(deleted_at_timestamp: nil).order(:name).page(page)
     else
-      @stores = Store.where(user: current_user, deleted_at_timestamp: nil)
+      @stores = Store.where(user: current_user, deleted_at_timestamp: nil).order(:name).page(page)
     end
   end
 

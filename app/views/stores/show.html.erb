@@ -15,13 +15,37 @@
 
     <%= button_to "Destroy this store", @store, method: :delete, class: "btn btn-danger p-1 mb-4 mt-4" %>
 
-  <h3>Products</h3>
-    <ul>
-    <% @store.products.each do |product| %>
-      <li><%= product.title %> - R$ <%= number_with_precision(product.price, precision: 2) %></li>
-    <% end %>
-    </ul>
+  <div>
+    <h3>Products</h3>
 
+    <div class="container_store_table">
+      <table class="table m-0 p-0 table-bordered border-dark">
+        <thead>
+          <tr class="row">
+            <td class="col-6 px-4">Name</td>
+            <td class="col-2">Price</td>
+            <td class="col-2">Editar</td>
+            <td class="col-2">Excluir</td>
+          </tr>
+        </thead>
+        <tbody>
+          <% @store.products.each do |product| %>
+          <tr class="row">
+            <td class="col-6 px-4"><%= link_to product.title, store_product_path(product.store, product) %></td>
+            <td class="col-2 d-flex justify-content-center"><%= number_with_precision(product.price, precision: 2) %></td>
+            <td class="col-2">
+            </td>
+            <td class="col-2">
+              <%= button_to store_product_path(@store, product), method: :delete, class: "btn btn-danger" do %>
+              <%= image_tag("delete.png", alt: "Destroy", class: "container_item_icon destroy-icon") %>
+              <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -40,14 +64,29 @@
     padding: 1rem;
   }
 
+    .table-bordered {
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
   .container_store_show_img {
     width: 250px;
     border-radius: 1rem;
   }
 
+  .container_store_table{
+    margin-left: 1rem;
+    margin-right: 1rem;
+  }
+
+    .container_item_icon {
+    width: 25px;
+  }
+
+
   @media (min-width:600px){
-    .container_store_show{ 
-      width: 600px;
+    .container_store_show{
+      width: 800px;
       margin-left: 2rem;
     }
 

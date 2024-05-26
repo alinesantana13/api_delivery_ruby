@@ -1,12 +1,18 @@
 class ApplicationController < ActionController::Base
 
-    def authenticate!
-        if request.format == Mime[:json]
-            check_token!
-        else
-            authenticate_user!
-        end
+  def authenticate!
+    if request.format == Mime[:json]
+      check_token!
+    else
+        authenticate_user!
+      end
+  end
+
+  def set_locale!
+    if params[:locale].present?
+      I18n.locale = params[:locale]
     end
+  end
 
     def current_user
         if request.format == Mime[:json]
@@ -17,7 +23,7 @@ class ApplicationController < ActionController::Base
     end
 
     private
-    
+
     def check_token!
         begin
             if user = authenticate_with_http_token { |t, _| User.from_token(t) }
@@ -35,11 +41,30 @@ class ApplicationController < ActionController::Base
         Credential.find_by(key: request.headers["X-API-KEY"]) || Credential.new
     end
 
-    def only_buyers!
-        is_buyer = (current_user && current_user.buyer?) && current_credential.buyer?
+  def is_buyers!
+    is_buyer = (current_user && current_user.buyer?) && current_credential.buyer?
 
-        if !is_buyer
-            render json: {message: "Not authorized"}, status: 401
-        end
+    if !is_buyer
+      render json: {message: "Not authorized"}, status: 401
+      end
+  end
+
+  def is_seller!
+    is_seller =  (current_user && current_user.admin?) && current_credential.seller?
+
+    if !is_seller
+      render json: {message: "Not authorized"}, status: 401
     end
+  end
+
+  def is_admin!
+    is_admin =  current_user && current_user.admin?
+
+    if !is_admin
+      render json: {message: "Not authorized"}, status: 401
+    end
+  end
+
+
+
 end
