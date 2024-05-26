@@ -7,8 +7,12 @@
     </div>
   <img class="container_product_show_img" src="<%= asset_path 'chef.jpg' %>"/>
   </div>
-  <div>
-  </div>
+    <div>
+      <%= link_to "Edit this product", edit_store_product_path(@store, @product) %> |
+      <%= link_to "Back to products", store_path(@store) %>
+    </div>
+
+    <%= button_to "Destroy this product", store_product_path(@store, @product), method: :delete, class: "btn btn-danger p-1 mb-4 mt-4" %>
 </div>
 
 <style>

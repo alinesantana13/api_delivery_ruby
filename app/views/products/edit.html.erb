@@ -1,12 +1,12 @@
 <div class="container_edit d-flex">
   <div class="container_edit_form d-flex flex-column justify-content-center align-self-center">
-    <h1>Editing store</h1>
+    <h1>Editing product</h1>
 
-    <%= render "form", store: @store %>
+    <%= render "form", product: @product %>
 
   <div class="container_edit_links d-flex flex-column align-items-center">
-        <%= link_to "Show this store", @store %>
-        <%= link_to "Back to stores", store_path %>
+        <%= link_to "Show this product", store_product_path(@store, @product) %>
+        <%= link_to "Back to products", store_path(@store) %>
   </div>
 </div>
 

@@ -19,9 +19,10 @@
                 <img src="<%= asset_path 'edit.png' %>" alt="Edit" class="container_user_icon edit-icon">
               <% end %>
             </td>
-            <td class="col-2 d-flex justify-content-center"><%= button_to user_path(user), method: :delete, class: "btn btn-danger p-1", data: { confirm: "Are you sure?" } do %>
-            <%= image_tag("delete.png", alt: "Destroy", class: "container_user_icon destroy-icon") %>
-            <% end %>
+            <td class="col-2 d-flex justify-content-center">
+              <%= button_to user_path(user), method: :delete, class: "btn btn-danger p-1", data: { confirm: "Are you sure?" } do %>
+              <%= image_tag("delete.png", alt: "Destroy", class: "container_user_icon destroy-icon") %>
+              <% end %>
             </td>
             </tr>
         <% end %>

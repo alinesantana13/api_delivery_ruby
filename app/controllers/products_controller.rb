@@ -2,7 +2,8 @@ class ProductsController < ApplicationController
   skip_forgery_protection
   before_action :authenticate!
   before_action :set_locale!
-  before_action :set_store
+  before_action :set_store,  only: [:index, :new, :create, :edit, :update, :destroy, :show]
+  before_action :set_product, only: [:edit, :update, :destroy, :show]
   before_action :check_owner, only: [:create]
 
   #Falta colocar que a credential e obrigatória passar para os perfis de seller e buyer
@@ -12,6 +13,10 @@ class ProductsController < ApplicationController
       redirect_to root_path, notice: "No permission for you!"
     end
     @products = Product.includes(:store)
+  end
+
+  def new
+    @product = @store.products.build
   end
 
   def create
@@ -26,12 +31,11 @@ class ProductsController < ApplicationController
   def index
     page = params.fetch(:page, 1)
     if is_buyers! || current_user.admin?
-      @products = Product.where(store_id: params[:store_id])
-        .order(:title).page(page)
+      @products = @store.products.kept.where(id: params[:id])
     else
       @store = current_user.stores.find_by(id: params[:store_id])
       if @store.present?
-        @products = @store.products.page(page)
+        @products = @store.products.kept.page(page)
       else
         render json: { error: "Store not found or not authorized #{@store.id}" }, status: :forbidden
       end
@@ -40,28 +44,31 @@ class ProductsController < ApplicationController
 
   # GET /stores/1/products/1 or /stores/1/products/1.json
   def show
-    if current_user.admin?
-      @product = Product.where(id: params[:id], store_id: params[:store_id])
-        .order(:title)
-      if @store.nil?
-        render json: { message: "Store not found"}, status: :not_found
-      end
-    end
   end
 
   def edit
   end
 
+  def update
+    if @product.update(product_params)
+      redirect_to [@store, @product], notice: 'Product was successfully updated.'
+    else
+      render :edit
+    end
+  end
+
+  #falta ajustar
   def destroy
-    if only_admin!
-      @product = Product.where(id: params[:id], store_id: params[:store_id])
+    if is_admin!
       if @product.discard
         respond_to do |format|
-          format.html { redirect_to request.referer, notice: "Product was successfully destroyed." }
+          format.html { redirect_to store_path(@store), notice: "Product was successfully destroyed." }
+          format.json { render json: {message: "Product was successfully destroyed."}, status: :ok}
         end
       else
         respond_to do |format|
-          format.html { redirect_to request.referer, alert: 'Error deleting product.' }
+          format.html { redirect_to users_url, notice: "Error." }
+          format.json { render json: {message: "Error"}, status: :unprocessable_entity}
         end
       end
     end
@@ -73,6 +80,16 @@ class ProductsController < ApplicationController
       @store = Store.find(params[:store_id])
     rescue
       render json: {message: "Not Found"}, status: 404
+    end
+  end
+
+  def set_product
+    @product = @store.products.kept.find_by(id: params[:id]) if @store
+    if @product.nil?
+      respond_to do |format|
+        format.html { redirect_to stores_url, notice: "Error." }
+        format.json { render json: {message: "Product not found"}, status: :not_found}
+      end
     end
   end
 
