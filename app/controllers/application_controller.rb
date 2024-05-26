@@ -42,29 +42,15 @@ class ApplicationController < ActionController::Base
     end
 
   def is_buyers!
-    is_buyer = (current_user && current_user.buyer?) && current_credential.buyer?
-
-    if !is_buyer
-      render json: {message: "Not authorized"}, status: 401
-      end
+    (current_user && current_user.buyer?) && current_credential.buyer?
   end
 
   def is_seller!
-    is_seller =  (current_user && current_user.admin?) && current_credential.seller?
-
-    if !is_seller
-      render json: {message: "Not authorized"}, status: 401
-    end
+    (current_user && current_user.admin?) && current_credential.seller?
   end
 
   def is_admin!
-    is_admin =  current_user && current_user.admin?
-
-    if !is_admin
-      render json: {message: "Not authorized"}, status: 401
-    end
+    current_user && current_user.admin?
   end
-
-
 
 end

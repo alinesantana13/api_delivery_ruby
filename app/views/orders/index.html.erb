@@ -1,0 +1,86 @@
+<div class="container_orders mt-2">
+  <h2 class="container_orders_title">Orders</h2>
+  <p style="color: red"> <%= notice %> </p>
+  <div class="container_order_table">
+    <table class="table table-bordered">
+      <thead>
+        <tr class="row">
+          <td class="col-1">id</td>
+          <td class="col-2">Store</td>
+          <td class="col-5">Buyer</td>
+          <td class="col-2">State</td>
+          <td class="col-1">Edit</td>
+          <td class="col-1">Delete</td>
+        </tr>
+      </thead>
+      <tbody>
+        <% @orders.each do |order| %>
+          <tr class="row">
+            <td class="col-1 d-flex"><%= link_to order.id, order_path(order) %></td>
+            <td class="col-2 d-flex justify-content-center"><%= order.store.name %></td>
+            <td class="col-5 d-flex justify-content-center"><%= order.user.email %></td>
+            <td class="col-2 d-flex justify-content-center"><%= order.state %></td>
+            <td class="col-1 d-flex justify-content-center">
+              <%= link_to edit_order_path(order), class: "btn btn-warning p-0" do %>
+              <img src="<%= asset_path 'edit.png' %>" alt="Edit" class="container_order_icon edit-icon">
+              <% end %>
+            </td>
+            <td class="col-1 d-flex justify-content-center">
+              <%= button_to order_path(order), method: :delete, class: "btn btn-danger p-0" do %>
+              <%= image_tag("delete.png", alt: "Destroy", class: "container_order_icon destroy-icon") %>
+              <% end %>
+            </td>
+            </tr>
+        <% end %>
+        </tbody>
+      </table>
+  </div>
+  <div class="d-flex justify-content-center">
+    <%= paginate @orders %>
+  </div>
+</div>
+
+<style>
+  main{
+    background-image: url('<%= asset_path 'chef.jpg' %>');
+  }
+
+
+  .container_order_table{
+    margin-left: 1rem;
+    width: 700px;
+    height: 530px;
+  }
+
+  .container_orders_title {
+    color: #FFFFFF;
+  }
+
+  .container_order_icon {
+    width: 25px;
+  }
+
+  @media (max-width: 500px) {
+    .container_order_table {
+      width: 270px;
+      height: 500px;
+      font-size: 0.7rem;
+      padding: 1rem;
+    }
+      .container_order_icon {
+      width: 15px;
+    }
+  }
+
+  @media (min-width: 500px) and (max-width: 800px) {
+    .container_order_table {
+      width: 470px;
+      height: 500px;
+      font-size: 0.7rem;
+      padding: 1rem;
+    }
+      .container_order_icon {
+      width: 15px;
+    }
+  }
+</style>

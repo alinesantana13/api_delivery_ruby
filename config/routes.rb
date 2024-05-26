@@ -19,7 +19,11 @@ Rails.application.routes.draw do
   end
 
   scope :buyers do
-    resources :orders, only: [:index, :create, :update, :destroy]
+    resources :orders, only: [:index, :show, :new, :create, :edit, :update, :destroy]
+  end
+
+  scope :orders do
+    resources :orders_items, only: [:index, :show, :new, :create, :edit, :update, :destroy]
   end
 
   root to: "welcome#index"
