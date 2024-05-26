@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_05_22_100236) do
+ActiveRecord::Schema[7.1].define(version: 2024_05_26_010518) do
   create_table "cancel_users", force: :cascade do |t|
     t.integer "user_id", null: false
     t.datetime "created_at", null: false
@@ -52,6 +52,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_05_22_100236) do
     t.decimal "price", precision: 8, scale: 2
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "discarded_at"
+    t.index ["discarded_at"], name: "index_products_on_discarded_at"
     t.index ["store_id"], name: "index_products_on_store_id"
   end
 
@@ -60,7 +62,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_05_22_100236) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "user_id"
-    t.datetime "deleted_at"
     t.integer "deleted_at_timestamp"
     t.index ["user_id"], name: "index_stores_on_user_id"
   end
