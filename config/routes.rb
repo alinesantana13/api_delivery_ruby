@@ -13,8 +13,8 @@ Rails.application.routes.draw do
 
   resources :users, only: [:index, :show, :update, :destroy]
 
-  scope "stores/:store_id" do
-    resources :products, only: [:index, :create, :update, :destroy]
+  resources :stores do
+    resources :products, only: [:index, :show, :create, :update, :destroy, :edit]
   end
 
   scope :buyers do
