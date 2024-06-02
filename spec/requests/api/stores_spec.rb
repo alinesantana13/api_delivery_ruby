@@ -12,7 +12,7 @@ RSpec.describe "/stores", type: :request do
   let(:signed_in_buyer) { api_sign_in(buyer, credential_buyer) }
   let(:signed_in_seller_verify) { api_sign_in(seller_verify, credential_seller) }
 
-    let(:store) { FactoryBot.create(:store, user: seller) }
+  let(:store) { FactoryBot.create(:store, user: seller) }
 
     describe "GET /index" do
         context "as a seller" do

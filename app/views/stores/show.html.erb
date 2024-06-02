@@ -5,7 +5,11 @@
       <p style="color: green"><%= notice %></p>
       <%= render @store %>
     </div>
-    <img class="container_store_show_img" src="<%= asset_path 'chef.jpg' %>"/>
+    <% if @store.image.attached? %>
+      <%= image_tag @store.image, class: "container_store_show_img" %>
+    <% else %>
+      <img class="container_store_show_img" src="<%= asset_path 'chef.jpg' %>"/>
+    <% end %>
   </div>
     <div>
       <%= link_to "Edit this store", edit_store_path(@store) %> |
