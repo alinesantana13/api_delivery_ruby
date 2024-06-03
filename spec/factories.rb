@@ -2,11 +2,11 @@ require 'faker'
 
 FactoryBot.define do
   factory :order_item do
-    
+
   end
 
   factory :order do
-    
+
   end
 
   factory :credential do
@@ -35,5 +35,11 @@ FactoryBot.define do
   factory :store do
     name {Faker::Company.name}
     association :user, factory: :user, traits: [:seller]
+  end
+
+  factory :product do
+    title {Faker::Commerce.product_name}
+    price {Faker::Commerce.price(range: 0..50.0, as_string: true)}
+    association :store, factory: :user, traits: [:seller]
   end
 end

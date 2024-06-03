@@ -22,7 +22,7 @@ RSpec.describe "/users", type: :request do
             "Authorization" => "Bearer #{signed_in_seller["token"]}"
           }
         )
-        expect(JSON.parse(response.body)['message']).to eq('Not authorized')
+        expect(JSON.parse(response.body)['message']).to eq('User does not have permission!')
       end
     end
 
@@ -35,7 +35,7 @@ RSpec.describe "/users", type: :request do
             "Authorization" => "Bearer #{signed_in_buyer["token"]}"
           }
         )
-        expect(JSON.parse(response.body)['message']).to eq('Not authorized')
+        expect(JSON.parse(response.body)['message']).to eq('User does not have permission!')
       end
     end
   end
