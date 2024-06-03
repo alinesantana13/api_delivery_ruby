@@ -119,9 +119,9 @@ class StoresController < ApplicationController
       required = params.require(:store)
 
       if current_user.admin?
-        required.permit(:name, :user_id)
+        required.permit(:name, :user_id, :image)
       else
-        required.permit(:name)
+        required.permit(:name, :image)
       end
     end
 

@@ -74,3 +74,6 @@ gem "bootstrap", "~> 5.3.3"
 gem "sassc-rails"
 gem "discard", "~> 1.2"
 gem "kaminari"
+
+gem "image_processing", ">= 1.2"
+gem "mini_magick"

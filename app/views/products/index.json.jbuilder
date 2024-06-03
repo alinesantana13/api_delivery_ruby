@@ -4,6 +4,7 @@ json.result do
       current = @products.current_page
       total = @products.total_pages
       per_page = @products.limit_value
+
       json.current current
       json.per_page per_page
       json.pages total
@@ -12,6 +13,7 @@ json.result do
       json.next (current == total ? nil : (current + 1))
     end
   end
+
   json.products do
     json.array! @products do |product|
       json.extract! product, :id, :title, :store_id

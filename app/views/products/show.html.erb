@@ -1,11 +1,19 @@
-<div class="container_product_show mt-4">
-  <div class="container_product_show_sep">
+<%= stylesheet_link_tag 'show_model', media: 'all' %>
+
+<div class="container_show mt-4">
+  <div class="container_show_sep">
     <div>
       <h1>Product</h1>
       <p style="color: green"><%= notice %></p>
       <%= render @product %>
     </div>
-  <img class="container_product_show_img" src="<%= asset_path 'chef.jpg' %>"/>
+
+   <% if @product.image.attached? %>
+      <%= image_tag @product.image, class: "container_show_img" %>
+    <% else %>
+      <img class="container_show_img" src="<%= asset_path 'chef.jpg' %>"/>
+    <% end %>
+
   </div>
     <div>
       <%= link_to "Edit this product", edit_store_product_path(@store, @product) %> |
@@ -17,37 +25,6 @@
 
 <style>
   main{
-    justify-content: center;
     background-image: url('<%= asset_path 'chef.jpg' %>');
-  }
-
-  .container_product_show{
-    display: flex;
-    flex-direction: column;
-    background-color: rgba(255, 255, 255, 0.7);;
-    border-radius: 1rem;
-    margin-bottom: 1rem;
-    padding: 1rem;
-  }
-
-  .container_product_show_img {
-    width: 250px;
-    border-radius: 1rem;
-  }
-
-  @media (min-width:600px){
-    .container_product_show{
-      width: 600px;
-      margin-left: 2rem;
-    }
-
-    .container_product_show_sep{
-      display: flex;
-      justify-content: space-between;
-    }
-
-    main{
-      justify-content: start;
-      }
   }
 </style>

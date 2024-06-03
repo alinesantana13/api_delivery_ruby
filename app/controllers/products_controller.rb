@@ -1,7 +1,6 @@
 class ProductsController < ApplicationController
   skip_forgery_protection
-  before_action :authenticate!
-  before_action :set_locale!
+  before_action :authenticate!, :set_locale!
   before_action :set_store, except: [:listing]
   before_action :set_product, only: [:edit, :update, :destroy, :show]
   before_action :seller_or_admin, only: [:create, :edit, :update, :destroy]
@@ -10,10 +9,10 @@ class ProductsController < ApplicationController
 
   def listing
     page = params.fetch(:page, 1)
-    if !current_user.admin?
+    if !is_admin!
       redirect_to root_path, notice: "No permission for you!"
     end
-    @products = Product.includes(:store).page(page)
+    @products = Product.kept.includes(:store).page(page)
   end
 
   def new
@@ -100,7 +99,7 @@ class ProductsController < ApplicationController
   end
 
   def product_params
-    params.require(:product).permit(:title, :price)
+    params.require(:product).permit(:title, :price, :image)
   end
 
   def seller_or_admin
