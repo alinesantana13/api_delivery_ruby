@@ -1,0 +1,38 @@
+<div class="container_order d-flex flex-column p-2" id="<%= dom_id order %>">
+  <div class="mb-2">
+    <strong>Buyer:</strong>
+    <%= order.buyer.email if order.buyer.email? %>
+  </div>
+  <div>
+    <strong>Store:</strong>
+    <%= order.store.name if order.store %>
+  </div>
+  <div>
+    <strong>State:</strong>
+    <%= order.state %>
+  </div>
+
+  <div>
+    <h5 class="mt-4">Order_items</h5>
+    <% total_price = 0 %>
+    <% order.order_items.each do |order_item| %>
+    <div class="">
+      <strong>Product:</strong>
+      <%= order_item.product.title %>
+    </div>
+    <div>
+      <strong>Amount:</strong>
+      <%= order_item.amount %>
+    </div>
+    <div class="mb-2">
+      <strong>Price:</strong>
+      <%= number_to_currency(order_item.price, precision: 2) %>
+    </div>
+    <% total_price += order_item.price %>
+    <% end %>
+    <div>
+      <strong>Total:</strong>
+      <%= number_to_currency(total_price, precision: 2) %>
+    </div>
+  </div>
+</div>

@@ -7,8 +7,33 @@ class Order < ApplicationRecord
   validate :buyer_role
 
   state_machine initial: :created do
+    state :created
+    state :ready_for_store
+    state :accepted
+    state :preparing
+    state :out_for_delivery
+    state :delivered
+    state :canceled
+
+    event :finished do
+      transition created: :ready_for_store
+    end
+
     event :accept do
-      transition created: :accepted
+      transition ready_for_store: :accepted
+    end
+    event :prepare do
+      transition accepted: :preparing
+    end
+    event :start_delivery do
+      transition preparing: :out_for_delivery
+    end
+    event :deliver do
+      transition out_for_delivery: :delivered
+    end
+
+    event :cancel do
+      transition [:created, :accepted] => :canceled
     end
   end
 

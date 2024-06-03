@@ -1,0 +1,19 @@
+<%= stylesheet_link_tag 'show_model', media: 'all' %>
+
+<div class="container_show mt-4">
+  <div class="container_show_sep">
+    <div>
+      <h1>Order</h1>
+      <p style="color: green"><%= notice %></p>
+      <%= render @order %>
+    </div>
+
+  </div>
+
+</div>
+
+<style>
+  main{
+    background-image: url('<%= asset_path 'chef.jpg' %>');
+  }
+</style>
