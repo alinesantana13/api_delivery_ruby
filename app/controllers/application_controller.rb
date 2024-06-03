@@ -46,7 +46,7 @@ class ApplicationController < ActionController::Base
   end
 
   def is_seller!
-    (current_user && current_user.admin?) && current_credential.seller?
+    (current_user && current_user.seller?) && current_credential.seller?
   end
 
   def is_admin!

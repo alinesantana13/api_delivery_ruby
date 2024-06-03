@@ -19,11 +19,16 @@ Rails.application.routes.draw do
   end
 
   scope :buyers do
-    resources :orders, only: [:index, :show, :new, :create, :edit, :update, :destroy]
-  end
-
-  scope :orders do
-    resources :orders_items, only: [:index, :show, :new, :create, :edit, :update, :destroy]
+    resources :orders, only: [:index, :show, :new, :create, :edit, :update, :destroy] do
+      resources :order_items, only: [:index, :show, :new, :create, :edit, :update, :destroy]
+      member do
+        patch :accept
+        patch :prepare
+        patch :start_delivery
+        patch :deliver
+        patch :cancel
+      end
+    end
   end
 
   root to: "welcome#index"
