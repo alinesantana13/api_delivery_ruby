@@ -77,3 +77,8 @@ gem "kaminari"
 
 gem "image_processing", ">= 1.2"
 gem "mini_magick"
+
+gem "faraday", "~> 2.9"
+
+gem "sidekiq", "~> 7.2"
+
