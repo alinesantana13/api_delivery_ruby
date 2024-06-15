@@ -49,6 +49,9 @@ class ProductsController < ApplicationController
 
   # GET /stores/1/products/1 or /stores/1/products/1.json
   def show
+    if is_seller!
+      @product = @product
+    end
   end
 
   def edit
@@ -56,25 +59,36 @@ class ProductsController < ApplicationController
 
   def update
     if @product.update(product_params)
-      redirect_to [@store, @product], notice: 'Product was successfully updated.'
+      respond_to do |format|
+        format.html { redirect_to [@store, @product], notice: "Product was successfully updated." }
+        format.json { render json: {message: "Product was successfully update."}, status: :ok}
+      end
     else
-      render :edit
+      respond_to do |format|
+        format.html { render :edit, notice: "Error." }
+        format.json { render json: {message: "Error"}, status: :unprocessable_entity}
+      end
     end
   end
 
   #falta ajustar
   def destroy
-    if is_admin!
+    if is_admin! && @product.discard
+      respond_to do |format|
+        format.html { redirect_to store_path(@store), notice: "Product was successfully destroyed." }
+        format.json { render json: {message: "Product was successfully destroyed."}, status: :ok}
+      end
+    elsif is_seller!
       if @product.discard
         respond_to do |format|
           format.html { redirect_to store_path(@store), notice: "Product was successfully destroyed." }
           format.json { render json: {message: "Product was successfully destroyed."}, status: :ok}
         end
-      else
-        respond_to do |format|
-          format.html { redirect_to users_url, notice: "Error." }
-          format.json { render json: {message: "Error"}, status: :unprocessable_entity}
-        end
+      end
+    else
+      respond_to do |format|
+        format.html { redirect_to users_url, notice: "Error." }
+        format.json { render json: {message: "Error"}, status: :unprocessable_entity}
       end
     end
   end
@@ -82,7 +96,11 @@ class ProductsController < ApplicationController
   private
   def set_store
     begin
-      @store = Store.find(params[:store_id])
+      if is_admin! || is_buyers!
+        @store = Store.find(params[:store_id])
+      elsif is_seller!
+        @store = current_user.stores.find_by(id: params[:store_id])
+      end
     rescue
       render json: {message: "Not Found"}, status: 404
     end

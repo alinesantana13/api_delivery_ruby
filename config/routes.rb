@@ -1,3 +1,5 @@
+require 'sidekiq/web'
+
 Rails.application.routes.draw do
   devise_for :users, only: [:sessions, :passwords] #Add registrations if necessary
 
@@ -34,4 +36,7 @@ Rails.application.routes.draw do
   root to: "welcome#index"
 
   get "up" => "rails/health#show", as: :rails_health_check
+
+  mount Sidekiq::Web => '/sidekiq'
+
 end
