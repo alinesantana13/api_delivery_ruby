@@ -31,9 +31,9 @@ RSpec.describe "/stores", type: :request do
                 )
 
                 json = JSON.parse(response.body)
-                expect(json.length).to eq(3)
+                expect((json["result"]["stores"]).length).to eq(3)
 
-                store_names = json.map { |store| store["name"] }
+                store_names = (json["result"]["stores"]).map { |store| store["name"] }
                 expect(store_names).to include("New Store 1", "New Store 2", "New Store 3")
             end
 
@@ -45,7 +45,8 @@ RSpec.describe "/stores", type: :request do
                         "Authorization" => "Bearer #{signed_in_seller["token"]}"
                     }
                 )
-                expect(JSON.parse(response.body).length).to eq(0)
+                json = JSON.parse(response.body)
+                expect((json["result"]["stores"]).length).to eq(0)
             end
         end
 
@@ -62,8 +63,8 @@ RSpec.describe "/stores", type: :request do
                         "Authorization" => "Bearer #{signed_in_buyer["token"]}"
                     }
                 )
-
-                expect(JSON.parse(response.body).length).to eq(4)
+                json = JSON.parse(response.body)
+                expect((json["result"]["stores"]).length).to eq(4)
             end
         end
     end
@@ -79,7 +80,6 @@ RSpec.describe "/stores", type: :request do
                         "Authorization" => "Bearer #{signed_in_seller["token"]}"
                     }
                 )
-
                 json = JSON.parse(response.body)
                 expect(json["name"]).to eq "New Store"
             end
@@ -129,8 +129,8 @@ RSpec.describe "/stores", type: :request do
                         "Authorization" => "Bearer #{signed_in_buyer["token"]}"
                     }
                 )
-
-                expect(JSON.parse(response.body)).to eq( {
+                json = JSON.parse(response.body)
+                expect(json).to eq( {
                     "id" => store.id,
                     "name" => store.name,
                     "user_id" => store.user_id,

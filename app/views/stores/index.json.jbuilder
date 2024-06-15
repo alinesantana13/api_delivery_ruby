@@ -3,10 +3,9 @@ json.result do
     json.pagination do
       current = @stores.current_page
       total = @stores.total_pages
-      per_page = @stores.limit_value
 
       json.current current
-      json.per_page per_page
+      json.per_page @stores.limit_value
       json.pages total
       json.count @stores.total_count
       json.previous (current > 1 ? (current - 1) : nil)

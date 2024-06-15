@@ -13,9 +13,13 @@ RSpec.describe "stores/edit", type: :view do
   before(:each) do
     assign(:store, store)
     @sellers = [
-      FactoryBot.create(:user, :seller), 
+      FactoryBot.create(:user, :seller),
       FactoryBot.create(:user, :seller)]
     assign(:sellers, @sellers)
+
+    Kaminari.config.default_per_page = 6
+    @stores = Kaminari.paginate_array(Store.all).page(1)
+    assign(:stores, @stores)
   end
 
   it "renders the edit store form" do
