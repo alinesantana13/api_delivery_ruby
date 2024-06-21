@@ -1,28 +1,33 @@
 admin = User.find_by(email: "admin@example.com")
 
-if !admin
-    admin = User.new(
-    email: "admin@example.com",
-    password: "123456",
-    password_confirmation: "123456",
-    role: :admin
-    )
-    admin.save!
+def random_date(start_date, end_date)
+  Time.at((end_date.to_f - start_date.to_f) * rand + start_date.to_f)
 end
-[
-    "Orange Curry",
-    "Belly King"
-].each do |store|
-    user = User.new( email: "#{store.split.map { |s| s.downcase }.join(".")}@example.com",
-    password: "123456",
-    password_confirmation: "123456",
-    role: :seller
-    )
-    user.save!
 
-    Store.find_or_create_by!(
-    name: store, user: user
-    )
+if !admin
+  admin = User.new(
+  email: "admin@example.com",
+  password: "123456",
+  password_confirmation: "123456",
+  role: :admin
+  )
+  admin.save!
+end
+
+[
+  "Orange Curry",
+  "Belly King"
+].each do |store|
+  user = User.new( email: "#{store.split.map { |s| s.downcase }.join(".")}@example.com",
+  password: "123456",
+  password_confirmation: "123456",
+  role: :seller
+  )
+  user.save!
+
+  Store.find_or_create_by!(
+  name: store, user: user
+  )
 end
 
 [
@@ -63,4 +68,25 @@ end
         )
         user.save!
     end
+end
+
+30.times do
+  store = Store.order("RANDOM()").first
+  buyer = User.find_by(id: 5)
+  order = Order.create!(
+    buyer: buyer,
+    store: store,
+    state: 'created',
+    created_at: random_date(DateTime.new(2024, 5, 17), DateTime.new(2024, 6, 16))
+  )
+
+  store_products = store.products.sample(2)
+  store_products.each do |product|
+    OrderItem.create!(
+      order: order,
+      product: product,
+      amount: rand(1..5),
+      price: product.price
+    )
+  end
 end
