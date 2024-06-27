@@ -3,8 +3,7 @@ class OrdersController < ApplicationController
   before_action :authenticate!
   before_action :chech_admin, only: [:new, :edit]
   before_action :buyer_or_admin, only: [:show, :create, :update]
-  before_action :set_order, only: [:show, :update, :accept, :prepare, :start_delivery, :deliver, :cancel]
-  before_action :seller_or_admin, only: [:accept, :prepare, :start_delivery, :deliver]
+  before_action :set_order, only: [:show, :update]
 
   def new
     @order = Order.new
@@ -13,17 +12,50 @@ class OrdersController < ApplicationController
   end
 
   def create
-    @order = Order.new(order_params) { |o| o.buyer = current_user }
+    ActiveRecord::Base.transaction do
+      @order = Order.new(order_params) { |o| o.buyer = current_user }
 
-    respond_to do |format|
       if @order.save
-        format.html { redirect_to order_url(@order), notice: "Order was successfully created." }
-        format.json { render json: @order, status: :created }
+        params[:order_items].each do |item_params|
+          product = Product.find(item_params[:product_id])
+          price = product.price * item_params[:amount]
+          @order_item = @order.order_items.create!(item_params.permit(:product_id, :amount).merge(price: price))
+        end
+
+        pay_now = ActiveModel::Type::Boolean.new.cast(params[:pay_now])
+
+        if pay_now
+          payment_status = process_payment
+          Rails.logger.info "Payment status: #{payment_status}"
+          if payment_status
+            @order.update!(payment_status: :paid_out, state: :created)
+          else
+            @order.update!(payment_status: :failed, state: :canceled)
+          end
+        else
+          @order.update!(payment_status: :in_the_delivery, state: :created)
+        end
+
+        @order.save!
+
+        respond_to do |format|
+          if @order.payment_status == 0 || @order.payment_status == 1
+            format.html { redirect_to order_url(@order), notice: "Order was successfully created." }
+            format.json { render json: @order, status: :created }
+          else
+            format.html { redirect_to order_url(@order), alert: "Order was created but payment failed." }
+            format.json { render json: { order: @order, message: "Order was created but payment failed." }, status: :created }
+          end
+        end
       else
-        format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @order.errors, status: :unprocessable_entity }
+        respond_to do |format|
+          format.html { render :new, status: :unprocessable_entity }
+          format.json { render json: @order.errors, status: :unprocessable_entity }
+        end
       end
     end
+  rescue ActiveRecord::RecordInvalid, StandardError => e
+    render json: { error: e.message }, status: :unprocessable_entity
   end
 
   def index
@@ -48,43 +80,22 @@ class OrdersController < ApplicationController
   end
 
   def update
-    @order.update(order_params)
+    if params[:state].present? && @order.respond_to?("#{params[:state]}!")
+      if @order.send("#{params[:state]}!")
+        render json: @order, status: :ok
+      else
+        render json: { errors: @order.errors.full_messages }, status: :unprocessable_entity
+      end
+    else
+      render json: { errors: ["Invalid state transition requested"] }, status: :unprocessable_entity
+    end
+  rescue StateMachines::InvalidTransition => e
+    render json: { errors: [e.message] }, status: :unprocessable_entity
   end
 
   # def destroy
   #   @order.discard
   # end
-
-  #state
-  def update_state(state, success_message, error_message)
-    if @order.send("#{state}")
-      respond_to do |format|
-        format.html { render :show, notice: success_message }
-        format.json { render json: { message: success_message }, status: :ok }
-      end
-    else
-      respond_to do |format|
-        format.html { render :show, notice: error_message }
-        format.json { render json: { message: error_message }, status: :unprocessable_entity }
-      end
-    end
-  end
-
-  def finished
-    update_state(:finished, "Order was ready for store.", "Failed to ready for store order.")
-  end
-
-  def accept
-    update_state(:accept, "Order was accepted.", "Failed to accept order.")
-  end
-
-  def prepare
-    update_state(:prepare, "Order is being prepared.", "Failed to prepare order.")
-  end
-
-  def start_delivery
-    update_state(:start_delivery, "Order is out for delivery.", "Failed to start delivery for order.")
-  end
 
   def deliver
     update_state(:deliver, "Order has been delivered.", "Failed to deliver order.")
@@ -97,6 +108,23 @@ class OrdersController < ApplicationController
   private
   def order_params
     params.require(:order).permit([:store_id])
+  end
+
+  def process_payment
+    payment_params = params.require(:payment).permit(:value, :number, :valid, :cvv)
+    begin
+      PaymentJob.new.perform(order: @order, value: payment_params[:value],
+                             number: payment_params[:number],
+                             valid: payment_params[:valid],
+                             cvv: payment_params[:cvv])
+      return true
+    rescue Faraday::ConnectionFailed => e
+      Rails.logger.error "Payment connection failed: #{e.message}"
+      return false
+    rescue StandardError => e
+      Rails.logger.error "Payment failed: #{e.message}"
+      return false
+    end
   end
 
   def set_order

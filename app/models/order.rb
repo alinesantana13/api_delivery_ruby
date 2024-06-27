@@ -3,8 +3,12 @@ class Order < ApplicationRecord
   belongs_to :store
   belongs_to :user, foreign_key: :buyer_id
   has_many :order_items
+  accepts_nested_attributes_for :order_items
   has_many :products, through: :order_items
   validate :buyer_role
+
+  # Enum for payment_status column
+  enum :payment_status, [:paid_out, :in_the_delivery, :failed]
 
   state_machine initial: :created do
     state :created
