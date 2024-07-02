@@ -110,33 +110,39 @@ class StoresController < ApplicationController
     sse.write({hello: "world!"}, event: "waiting-order")
     EventMachine.run do
       EventMachine::PeriodicTimer.new(3) do
-        order = Order.where(state: :created).order(created_at: :desc).first
-        order_items = order.order_items
-        #order = Order.where(store_id: params[:store_id], status: :created)
-        if order
-          items_with_products = order_items.map do |item|
+        orders = Order.joins(:store)
+                      .where(state: :created,
+                      payment_status: ["paid_out", "in_the_delivery"],
+                      stores: { user_id: current_user.id })
+                      .order(created_at: :desc)
+        if orders.any?
+          new_orders = orders.map do |order|
+            order_items = order.order_items
+            items_with_products = order_items.map do |item|
+              {
+                product_title: item.product.title,
+                amount: item.amount,
+                price: item.price
+              }
+            end
+
+            total_price = order_items.sum { |order_item| order_item.price }
+            total_order_items = ActionController::Base.helpers.number_to_currency(total_price)
+
             {
-              product_title: item.product.title,
-              amount: item.amount,
-              price: item.price
+              id: order.id,
+              buyer_id: order.buyer_id,
+              store_id: order.store_id,
+              state: order.state,
+              payment_status: order.payment_status,
+              created_at: order.created_at,
+              total_order_items: total_order_items,
+              order_items: items_with_products
             }
           end
 
-          total_price = order_items.sum { |order_item| order_item.price }
-          total_order_items = number_to_currency(total_price)
-
-          message = { time: Time.now, order: {
-            id: order.id,
-            buyer_id: order.buyer_id,
-            store_id: order.store_id,
-            state: order.state,
-            payment_status: order.payment_status,
-            created_at: order.created_at,
-            total_order_items: total_order_items,
-            order_items: items_with_products
-            }
-          }
-          sse.write(message, event: "new-order")
+          message = { time: Time.now, orders: new_orders }
+            sse.write(message, event: "new-order")
         else
           sse.write(message, event: "no")
         end

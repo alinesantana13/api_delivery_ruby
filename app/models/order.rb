@@ -5,6 +5,7 @@ class Order < ApplicationRecord
   has_many :order_items
   accepts_nested_attributes_for :order_items
   has_many :products, through: :order_items
+  paginates_per 60
   validate :buyer_role
 
   # Enum for payment_status column
@@ -12,19 +13,14 @@ class Order < ApplicationRecord
 
   state_machine initial: :created do
     state :created
-    state :ready_for_store
     state :accepted
     state :preparing
     state :out_for_delivery
     state :delivered
     state :canceled
 
-    event :finished do
-      transition created: :ready_for_store
-    end
-
     event :accept do
-      transition ready_for_store: :accepted
+      transition created: :accepted
     end
     event :prepare do
       transition accepted: :preparing
