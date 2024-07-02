@@ -84,3 +84,4 @@ gem "sidekiq", "~> 7.2"
 
 gem "matrix"
 
+gem "eventmachine", "~> 1.2"

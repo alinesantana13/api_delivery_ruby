@@ -18,18 +18,12 @@ Rails.application.routes.draw do
 
   resources :stores do
     resources :products, only: [:index, :show, :new, :create, :destroy, :edit, :update]
+    get "/orders/new" => "stores#new_order"
   end
 
   scope :buyers do
     resources :orders, only: [:index, :show, :new, :create, :edit, :update, :destroy] do
       resources :order_items, only: [:index, :show, :new, :create, :edit, :update, :destroy]
-      member do
-        patch :accept
-        patch :prepare
-        patch :start_delivery
-        patch :deliver
-        patch :cancel
-      end
     end
   end
 

@@ -2,7 +2,7 @@ class OrdersController < ApplicationController
   skip_forgery_protection
   before_action :authenticate!
   before_action :chech_admin, only: [:new, :edit]
-  before_action :buyer_or_admin, only: [:show, :create, :update]
+  before_action :buyer_or_admin, only: [:show, :create]
   before_action :set_order, only: [:show, :update]
 
   def new
@@ -39,7 +39,7 @@ class OrdersController < ApplicationController
         @order.save!
 
         respond_to do |format|
-          if @order.payment_status == 0 || @order.payment_status == 1
+          if @order.payment_status == "paid_out" || @order.payment_status == "in_the_delivery"
             format.html { redirect_to order_url(@order), notice: "Order was successfully created." }
             format.json { render json: @order, status: :created }
           else
@@ -97,27 +97,24 @@ class OrdersController < ApplicationController
   #   @order.discard
   # end
 
-  def deliver
-    update_state(:deliver, "Order has been delivered.", "Failed to deliver order.")
-  end
-
-  def cancel
-    update_state(:cancel, "Order has been canceled.", "Failed to cancel order.")
-  end
-
   private
   def order_params
     params.require(:order).permit([:store_id])
   end
 
   def process_payment
+    debugger
     payment_params = params.require(:payment).permit(:value, :number, :valid, :cvv)
     begin
-      PaymentJob.new.perform(order: @order, value: payment_params[:value],
+      @payment = PaymentJob.new.perform(order: @order, value: payment_params[:value],
                              number: payment_params[:number],
                              valid: payment_params[:valid],
                              cvv: payment_params[:cvv])
-      return true
+      if @payment.status == 200
+        return true
+      else
+        return false
+      end
     rescue Faraday::ConnectionFailed => e
       Rails.logger.error "Payment connection failed: #{e.message}"
       return false

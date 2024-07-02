@@ -1,4 +1,7 @@
 class StoresController < ApplicationController
+  include ActionController::Live
+  include ActionView::Helpers::NumberHelper
+
   skip_forgery_protection only:  %i[ create update destroy]
   before_action :authenticate!
   before_action :not_buyer_permission, only: %i[ create update new destroy  ]
@@ -99,6 +102,50 @@ class StoresController < ApplicationController
         format.json { render json: {error: "Internal server error"}, status: :unprocessable_entity }
       end
     end
+  end
+
+  def new_order
+    response.headers["Content-Type"] = "text/event-stream"
+    sse = SSE.new(response.stream, retry: 300, event: "waiting-orders")
+    sse.write({hello: "world!"}, event: "waiting-order")
+    EventMachine.run do
+      EventMachine::PeriodicTimer.new(3) do
+        order = Order.where(state: :created).order(created_at: :desc).first
+        order_items = order.order_items
+        #order = Order.where(store_id: params[:store_id], status: :created)
+        if order
+          items_with_products = order_items.map do |item|
+            {
+              product_title: item.product.title,
+              amount: item.amount,
+              price: item.price
+            }
+          end
+
+          total_price = order_items.sum { |order_item| order_item.price }
+          total_order_items = number_to_currency(total_price)
+
+          message = { time: Time.now, order: {
+            id: order.id,
+            buyer_id: order.buyer_id,
+            store_id: order.store_id,
+            state: order.state,
+            payment_status: order.payment_status,
+            created_at: order.created_at,
+            total_order_items: total_order_items,
+            order_items: items_with_products
+            }
+          }
+          sse.write(message, event: "new-order")
+        else
+          sse.write(message, event: "no")
+        end
+      end
+    end
+    rescue IOError, ActionController::Live::ClientDisconnected
+      sse.close
+    ensure
+      sse.close
   end
 
   private

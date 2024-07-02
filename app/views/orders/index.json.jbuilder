@@ -3,6 +3,7 @@ json.array! @orders do |order|
   json.buyer_id order.buyer_id
   json.store_id order.store_id
   json.state order.state
+  json.payment_status order.payment_status
   json.created_at order.created_at
   json.total_order_items number_to_currency(order.order_items.sum { |order_item| order_item.price })
 
