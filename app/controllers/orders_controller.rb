@@ -60,6 +60,9 @@ class OrdersController < ApplicationController
 
   def index
     page = params.fetch(:page, 1)
+    state_filter = params[:state]
+    id_filter = params[:id]
+
     if is_buyers!
       @orders = Order.where(buyer_id: current_user.id).page(page)
     elsif is_seller!
@@ -67,6 +70,9 @@ class OrdersController < ApplicationController
     else
       @orders = Order.includes(:user, :store).page(page)
     end
+
+    @orders = @orders.where(state: state_filter) if state_filter.present?
+    @orders = @orders.where(id: id_filter) if id_filter.present?
   end
 
   def show
